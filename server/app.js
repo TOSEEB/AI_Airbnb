@@ -10,61 +10,83 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const favoriteRoutes = require("./routes/favoriteRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const aiRoutes = require("./routes/aiRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
+
 const errorHandler = require("./middleware/errorHandler");
 
 const sendOTPEmail = require("./services/emailService");
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
 
 
+// =======================
 // Test Email Route
+// =======================
+
 app.get("/test-email", async (req, res) => {
-
   try {
-
     await sendOTPEmail(
       "toseebbeg02@gmail.com",
       "483921"
     );
 
     res.send("Email sent successfully");
-
   } catch (error) {
-
     console.log(error);
 
     res.status(500).send("Email failed");
-
   }
-
 });
 
 
-// Routes
+// =======================
+// API Routes
+// =======================
+
 app.use("/api/auth", authRoutes);
+
 app.use("/api/stays", stayRoutes);
+
 app.use("/api/bookings", bookingRoutes);
+
 app.use("/api/reviews", reviewRoutes);
+
 app.use("/api/dashboard", dashboardRoutes);
+
 app.use("/api/favorites", favoriteRoutes);
+
 app.use("/api/admin", adminRoutes);
+
 app.use("/api/ai", aiRoutes);
 
+app.use("/api/upload", uploadRoutes);
 
-app.use(errorHandler);
 
+// =======================
+// Root Route
+// =======================
 
 app.get("/", (req, res) => {
   res.send("AI Airbnb API is running");
 });
 
 
-module.exports = app;
+// =======================
+// Error Handler
+// =======================
+
+app.use(errorHandler);
+
+module.exports = app;  
+
+
