@@ -1,0 +1,30 @@
+# Dependencies
+client/node_modules/
+server/node_modules/
+
+# Environment variables
+client/.env
+server/.env
+
+# Build output
+client/dist/
+client/build/
+
+
+
+
+# Logs
+npm-debug.log*
+
+# Uploaded files (if using local uploads)
+server/uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code settings (optional)
+.vscode/ 
+
+
+*.log 
