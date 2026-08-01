@@ -64,4 +64,4 @@ const BookingCard = ({ booking }) => {
   );
 };
 
-export default BookingCard;
+export default BookingCard; 
