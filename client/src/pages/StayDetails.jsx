@@ -8,7 +8,11 @@ import ReviewCard from "../components/ReviewCard";
 
 import { getStayById } from "../api/stayApi";
 import { getReviews } from "../api/reviewApi";
-import { createBooking } from "../api/bookingApi";
+import {
+  createBooking,
+  createPaymentOrder,
+  verifyPayment,
+} from "../api/bookingApi";
 
 const StayDetails = () => {
   const { id } = useParams();
@@ -23,6 +27,7 @@ const StayDetails = () => {
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [tripSummary, setTripSummary] = useState(null); 
 
 
   useEffect(() => {
@@ -46,48 +51,60 @@ const StayDetails = () => {
   };
 
 
-  // Calculate number of nights
-  const calculateNights = () => {
-    if (!checkIn || !checkOut) return 0;
+ 
 
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-
-    const difference = end - start;
-
-    return Math.ceil(
-      difference / (1000 * 60 * 60 * 24)
+ const bookStay = async () => {
+  if (!checkIn || !checkOut) {
+    return toast.error(
+      "Please select check-in and check-out dates."
     );
-  };
+  }
 
+  if (new Date(checkOut) <= new Date(checkIn)) {
+    return toast.error(
+      "Check-out date must be after check-in."
+    );
+  }
 
-  const bookStay = async () => {
+  if (guests < 1) {
+    return toast.error(
+      "Please enter valid guests."
+    );
+  }
 
-    if (!checkIn || !checkOut) {
-      return toast.error(
-        "Please select check-in and check-out dates."
-      );
-    }
+  try {
+    setBookingLoading(true);
 
+    // Create Razorpay Order
+    const orderRes = await createPaymentOrder({
+  stayId: id,
+  checkIn,
+  checkOut,
+  guests,
+});
 
-    if (new Date(checkOut) <= new Date(checkIn)) {
-      return toast.error(
-        "Check-out date must be after check-in."
-      );
-    }
+const { order, tripSummary } = orderRes.data;
 
+setTripSummary(tripSummary);
 
-    if (guests < 1) {
-      return toast.error(
-        "Please enter a valid number of guests."
-      );
-    }
+    
 
+  const options = {
+  key: import.meta.env.VITE_RAZORPAY_KEY_ID,
 
+  amount: order.amount,
+
+  currency: order.currency,
+
+  name: "AIbnb",
+
+  description: "Stay Booking",
+
+  order_id: order.id,
+
+  handler: async function (response) {
     try {
-
-      setBookingLoading(true);
-
+      await verifyPayment(response);
 
       await createBooking({
         stayId: id,
@@ -96,30 +113,51 @@ const StayDetails = () => {
         guests,
       });
 
-
-      toast.success(
-        "Booking successful!"
-      );
-
+      toast.success("Booking Confirmed!");
 
       setCheckIn("");
       setCheckOut("");
       setGuests(1);
-
+      setTripSummary(null);
 
     } catch (err) {
-
       toast.error(
         err.response?.data?.message ||
-        "Booking failed"
+        "Payment verification failed."
       );
-
-    } finally {
-
-      setBookingLoading(false);
-
     }
-  };
+  },
+
+  theme: {
+    color: "#F43F5E",
+  },
+};
+
+    const razorpay = new window.Razorpay(options);
+
+    razorpay.on("payment.failed", function (response) {
+  toast.error("Payment Failed!");
+
+  console.log(response.error);
+});
+
+    razorpay.open();
+
+  } catch (err) {
+
+    console.error(err);
+
+    toast.error(
+      err.response?.data?.message ||
+      "Unable to start payment."
+    );
+
+  } finally {
+
+    setBookingLoading(false);
+
+  }
+}; 
 
 
   if (loading) return <Loader />;
@@ -323,48 +361,38 @@ const StayDetails = () => {
 
 
             {/* PRICE SUMMARY */}
+            {/* PRICE SUMMARY */}
 
-            {
-              checkIn &&
-              checkOut &&
-              calculateNights() > 0 && (
+{tripSummary && (
+  <div className="border-t mt-6 pt-5">
 
-                <div className="border-t mt-6 pt-5 space-y-3">
+    <h3 className="text-lg font-semibold mb-4">
+      Price Details
+    </h3>
 
+    <div className="flex justify-between text-gray-700 mb-3">
+      <span>
+        ₹{tripSummary.nightlyRate.toLocaleString()} × {tripSummary.nights}{" "}
+        {tripSummary.nights === 1 ? "night" : "nights"}
+      </span>
 
-                  <div className="flex justify-between text-gray-600">
+      <span>
+        ₹{tripSummary.subtotal.toLocaleString()}
+      </span>
+    </div>
 
-                    <span>
-                      ₹{stay.price} × {calculateNights()} nights
-                    </span>
+    <hr className="my-4" />
 
+    <div className="flex justify-between text-xl font-bold">
+      <span>Total</span>
 
-                    <span>
-                      ₹{stay.price * calculateNights()}
-                    </span>
+      <span>
+        ₹{tripSummary.total.toLocaleString()}
+      </span>
+    </div>
 
-                  </div>
-
-
-
-                  <div className="flex justify-between text-xl font-bold">
-
-                    <span>
-                      Total
-                    </span>
-
-
-                    <span>
-                      ₹{stay.price * calculateNights()}
-                    </span>
-
-                  </div>
-
-
-                </div>
-
-              )
-            }
+  </div>
+)}
 
 
 
@@ -385,11 +413,9 @@ const StayDetails = () => {
 
 
 
-            <p className="text-center text-gray-500 mt-4">
-
-              You won't be charged yet.
-
-            </p>
+            <p className="text-center text-gray-500 mt-4 text-sm">
+  Secure payments powered by Razorpay
+</p>
 
 
           </div>

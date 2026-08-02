@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const stayRoutes = require("./routes/stayRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const favoriteRoutes = require("./routes/favoriteRoutes");
@@ -43,7 +44,6 @@ app.get("/test-email", async (req, res) => {
     res.send("Email sent successfully");
   } catch (error) {
     console.log(error);
-
     res.status(500).send("Email failed");
   }
 });
@@ -58,6 +58,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/stays", stayRoutes);
 
 app.use("/api/bookings", bookingRoutes);
+
+// Payment Routes
+// POST /api/payments/create-order
+// POST /api/payments/verify
+app.use("/api/payments", paymentRoutes);
 
 app.use("/api/reviews", reviewRoutes);
 
@@ -87,6 +92,5 @@ app.get("/", (req, res) => {
 
 app.use(errorHandler);
 
-module.exports = app;  
 
-
+module.exports = app;
