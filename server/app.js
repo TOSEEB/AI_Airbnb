@@ -26,19 +26,35 @@ const sendOTPEmail = require("./services/emailService");
 
 const app = express();
 
-// Connect MongoDB once
-connectDatabase().catch((err) => {
-  console.error("MongoDB startup failed:", err);
-});
-
 app.use(
   cors({
     origin: isProduction
-      ? process.env.CLIENT_URL || ""
+      ? process.env.CLIENT_URL || true
       : "http://localhost:5173",
     credentials: true,
   })
 );
+
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(cookieParser());
+
+app.use(async (req, res, next) => {
+  if (mongoose.connection.readyState === 1) {
+    return next();
+  }
+
+  try {
+    await connectDatabase();
+    next();
+  } catch (err) {
+    console.error("Database connection failed during request:", err.message);
+    res.status(503).json({
+      message:
+        "Service unavailable. Database connection failed. Check MONGO_URI.",
+    });
+  }
+});
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));

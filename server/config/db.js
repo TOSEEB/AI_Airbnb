@@ -13,7 +13,9 @@ const connectDatabase = async () => {
 
   try {
     cachedConnection = mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 3000,
+      socketTimeoutMS: 3000,
+      connectTimeoutMS: 3000,
     });
 
     await cachedConnection;
@@ -21,11 +23,10 @@ const connectDatabase = async () => {
     console.log("MongoDB connected");
 
     return cachedConnection;
-
   } catch (error) {
     cachedConnection = null;
     console.error("MongoDB connection failed:", error.message);
-    throw error;
+    throw new Error("Database connection failed. Check MONGO_URI and network access.");
   }
 };
 

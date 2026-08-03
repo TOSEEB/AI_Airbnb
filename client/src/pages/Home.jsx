@@ -12,6 +12,7 @@ const Home = () => {
   const [stays, setStays] = useState([]);
   const [filteredStays, setFilteredStays] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
@@ -117,8 +118,12 @@ if (category !== "All") {
 
       setStays(res.data);
       setFilteredStays(res.data);
+      setError("");
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      setError(
+        "Unable to load stays. Please check VITE_API_URL or backend deployment."
+      );
     } finally {
       setLoading(false);
     }
@@ -145,6 +150,16 @@ if (category !== "All") {
 
         {loading ? (
           <Loader />
+        ) : error ? (
+          <div className="mt-12 text-center text-red-600">
+            <h2 className="text-2xl font-semibold">
+              {error}
+            </h2>
+            <p className="text-gray-500 mt-2">
+              If this page is deployed separately from your backend, set
+              `VITE_API_URL` in Vercel to your backend URL.
+            </p>
+          </div>
         ) : filteredStays.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
             {filteredStays.map((stay) => (
