@@ -26,10 +26,13 @@ import NotFound from "./pages/NotFound";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import HostRoute from "./components/HostRoute";
+import PublicRoute from "./components/PublicRoute";
+
 
 function App() {
   return (
     <div className="app-shell">
+
       <Navbar />
 
       <Routes>
@@ -38,46 +41,67 @@ function App() {
         {/* Public Routes */}
         {/* ========================= */}
 
-        <Route path="/" element={<Home />} />
+        <Route 
+          path="/" 
+          element={<Home />} 
+        />
 
+
+        {/* Only for NON logged-in users */}
         <Route
           path="/login"
-          element={<Login />}
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
         />
 
         <Route
           path="/register"
-          element={<Signup />}
+          element={
+            <PublicRoute>
+              <Signup />
+            </PublicRoute>
+          }
         />
+
 
         <Route
           path="/verify-otp"
           element={<VerifyOTP />}
         />
 
+
         <Route
           path="/forgot-password"
           element={<ForgotPassword />}
         />
+
 
         <Route
           path="/reset-password/:token"
           element={<ResetPassword />}
         />
 
+
         <Route
           path="/stay/:id"
           element={<StayDetails />}
         />
+
 
         <Route
           path="/ai"
           element={<AIRecommendation />}
         />
 
+
+
         {/* ========================= */}
         {/* Protected User Routes */}
         {/* ========================= */}
+
 
         <Route
           path="/dashboard"
@@ -88,6 +112,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/bookings"
           element={
@@ -96,6 +121,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
 
         <Route
           path="/favorites"
@@ -106,6 +132,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/profile"
           element={
@@ -115,9 +142,12 @@ function App() {
           }
         />
 
+
+
         {/* ========================= */}
         {/* Host Routes */}
         {/* ========================= */}
+
 
         <Route
           path="/host"
@@ -128,6 +158,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/host/dashboard"
           element={
@@ -136,6 +167,7 @@ function App() {
             </HostRoute>
           }
         />
+
 
         <Route
           path="/host/stays/new"
@@ -146,6 +178,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/host/stays/edit/:id"
           element={
@@ -155,9 +188,12 @@ function App() {
           }
         />
 
+
+
         {/* ========================= */}
         {/* Admin */}
         {/* ========================= */}
+
 
         <Route
           path="/admin"
@@ -168,6 +204,8 @@ function App() {
           }
         />
 
+
+
         {/* ========================= */}
         {/* 404 */}
         {/* ========================= */}
@@ -177,11 +215,15 @@ function App() {
           element={<NotFound />}
         />
 
+
       </Routes>
 
+
       <Footer />
+
     </div>
   );
 }
+
 
 export default App;

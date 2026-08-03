@@ -69,43 +69,89 @@ const AddStay = () => {
   };
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      setLoading(true);
-
-      const payload = {
-        ...formData,
-        images: formData.images,
-      };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
 
-      await createStay(payload);
+  // ==========================
+  // Frontend Validation
+  // ==========================
+
+  if (formData.images.length === 0) {
+    toast.error(
+      "Please upload at least one property image"
+    );
+    return;
+  }
 
 
-      toast.success(
-        "Stay added successfully!"
-      );
+  if (formData.price <= 0) {
+    toast.error(
+      "Price must be greater than 0"
+    );
+    return;
+  }
 
 
-      setTimeout(() => {
-        navigate("/host/dashboard");
-      }, 1000);
+  if (formData.guests < 1) {
+    toast.error(
+      "Guests must be at least 1"
+    );
+    return;
+  }
 
 
-    } catch (err) {
-      console.error(err);
+  if (formData.bedrooms < 1) {
+    toast.error(
+      "Bedrooms must be at least 1"
+    );
+    return;
+  }
 
-      toast.error(
-        err.response?.data?.message ||
-        "Failed to create stay"
-      );
 
-    } finally {
-      setLoading(false);
-    }
-  };
+
+  try {
+
+    setLoading(true);
+
+
+    const payload = {
+      ...formData,
+      images: formData.images,
+    };
+
+
+    await createStay(payload);
+
+
+    toast.success(
+      "Stay added successfully!"
+    );
+
+
+    setTimeout(() => {
+      navigate("/host/dashboard");
+    }, 1000);
+
+
+
+  } catch (err) {
+
+    console.error(err);
+
+
+    toast.error(
+      err.response?.data?.message ||
+      "Failed to create stay"
+    );
+
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
 
 
   return (

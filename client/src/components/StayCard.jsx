@@ -2,7 +2,10 @@ import { Link } from "react-router-dom";
 
 const StayCard = ({ stay }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+    <Link
+      to={`/stay/${stay._id}`}
+      className="block bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer"
+    >
       <img
         src={stay.images?.[0]}
         alt={stay.title}
@@ -41,15 +44,12 @@ const StayCard = ({ stay }) => {
             ₹{stay.price}/night
           </span>
 
-          <Link
-            to={`/stay/${stay._id}`}
-            className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition"
-          >
+          <span className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition">
             View Details
-          </Link>
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

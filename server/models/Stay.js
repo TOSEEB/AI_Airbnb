@@ -55,8 +55,37 @@ const staySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+
+
+    // AI Generated Travel Recommendation Cache
+    aiRecommendation: {
+
+      attractions: {
+        type: [String],
+        default: [],
+      },
+
+      food: {
+        type: [String],
+        default: [],
+      },
+
+      activities: {
+        type: [String],
+        default: [],
+      },
+
+      itinerary: {
+        type: [String],
+        default: [],
+      },
+
+    },
+
+
   },
   { timestamps: true }
 );
+
 
 module.exports = mongoose.model("Stay", staySchema);

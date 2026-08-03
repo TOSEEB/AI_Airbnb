@@ -10,7 +10,11 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const favoriteRoutes = require("./routes/favoriteRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+
 const aiRoutes = require("./routes/aiRoutes");
+const plannerRoutes = require("./routes/plannerRoutes");
+const chatRoutes = require("./routes/chatRoutes"); // NEW
+
 const uploadRoutes = require("./routes/uploadRoutes");
 
 const errorHandler = require("./middleware/errorHandler");
@@ -28,7 +32,6 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
-
 
 // =======================
 // Test Email Route
@@ -48,7 +51,6 @@ app.get("/test-email", async (req, res) => {
   }
 });
 
-
 // =======================
 // API Routes
 // =======================
@@ -60,8 +62,6 @@ app.use("/api/stays", stayRoutes);
 app.use("/api/bookings", bookingRoutes);
 
 // Payment Routes
-// POST /api/payments/create-order
-// POST /api/payments/verify
 app.use("/api/payments", paymentRoutes);
 
 app.use("/api/reviews", reviewRoutes);
@@ -72,10 +72,21 @@ app.use("/api/favorites", favoriteRoutes);
 
 app.use("/api/admin", adminRoutes);
 
+// =======================
+// AI Routes
+// =======================
+
+// AI Stay Assistant
 app.use("/api/ai", aiRoutes);
 
-app.use("/api/upload", uploadRoutes);
+// AI Planner
+app.use("/api/ai", plannerRoutes);
 
+// AI Chat (NEW)
+app.use("/api/ai", chatRoutes);
+
+// Upload
+app.use("/api/upload", uploadRoutes);
 
 // =======================
 // Root Route
@@ -85,12 +96,10 @@ app.get("/", (req, res) => {
   res.send("AI Airbnb API is running");
 });
 
-
 // =======================
 // Error Handler
 // =======================
 
 app.use(errorHandler);
-
 
 module.exports = app;
