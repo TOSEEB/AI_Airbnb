@@ -581,12 +581,12 @@ const connectDatabase = async () => {
     });
 
     console.log("MongoDB connected");
-   
 
     await seedStays();
+
   } catch (error) {
-    console.log("MongoDB connection failed");
-    console.log(error.message);
+    console.error("MongoDB connection failed:", error);
+    throw error;
   }
 };
 
