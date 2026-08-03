@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const mongoose = require("mongoose");
 const { isProduction } = require("./utils/env");
 
 const authRoutes = require("./routes/authRoutes");
@@ -14,7 +15,7 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const aiRoutes = require("./routes/aiRoutes");
 const plannerRoutes = require("./routes/plannerRoutes");
-const chatRoutes = require("./routes/chatRoutes"); // NEW
+const chatRoutes = require("./routes/chatRoutes");
 
 const uploadRoutes = require("./routes/uploadRoutes");
 
@@ -58,33 +59,20 @@ app.get("/test-email", async (req, res) => {
 // =======================
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/stays", stayRoutes);
-
 app.use("/api/bookings", bookingRoutes);
-
-// Payment Routes
 app.use("/api/payments", paymentRoutes);
-
 app.use("/api/reviews", reviewRoutes);
-
 app.use("/api/dashboard", dashboardRoutes);
-
 app.use("/api/favorites", favoriteRoutes);
-
 app.use("/api/admin", adminRoutes);
 
 // =======================
 // AI Routes
 // =======================
 
-// AI Stay Assistant
 app.use("/api/ai", aiRoutes);
-
-// AI Planner
 app.use("/api/ai", plannerRoutes);
-
-// AI Chat (NEW)
 app.use("/api/ai", chatRoutes);
 
 // Upload
@@ -101,9 +89,15 @@ app.get("/", (req, res) => {
   });
 });
 
+// =======================
+// Health Check
+// =======================
+
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
+    dbState: mongoose.connection.readyState,
+    dbName: mongoose.connection.name,
     timestamp: new Date().toISOString(),
   });
 });
