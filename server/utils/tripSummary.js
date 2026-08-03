@@ -17,22 +17,24 @@ const calculateTripSummary = (
     return null;
   }
 
-  const nights = Math.round(
-    (end - start) / (1000 * 60 * 60 * 24)
+  const nights = Math.max(
+    1,
+    Math.round((end - start) / (1000 * 60 * 60 * 24))
   );
 
-  const nightlyRate = Number(stay.price || 0);
-
+  const nightlyRate = Number(stay.priceValue ?? stay.price ?? 0);
+  const guestCount = Math.max(1, Number(guests) || 1);
   const subtotal = nightlyRate * nights;
-
-  const total = subtotal;
+  const serviceFee = Math.round(subtotal * 0.1);
+  const guestFee = guestCount > 1 ? 40 : 0;
+  const total = subtotal + serviceFee + guestFee;
 
   return {
     nights,
     nightlyRate,
     subtotal,
-    serviceFee: 0,
-    guestFee: 0,
+    serviceFee,
+    guestFee,
     total,
   };
 };

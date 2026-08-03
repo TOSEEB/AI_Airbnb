@@ -15,6 +15,7 @@ const generateToken = (user) => {
     process.env.JWT_SECRET || "dev-secret",
     {
       expiresIn: "7d",
+      issuer: "ai-airbnb",
     }
   );
 };
