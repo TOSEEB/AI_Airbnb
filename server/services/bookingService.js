@@ -7,7 +7,12 @@ const { calculateTripSummary } = require("../utils/tripSummary");
 // ==========================
 
 const createBooking = async (bookingData, userId) => {
-  const { stayId, checkIn, checkOut, guests = 1 } = bookingData;
+  const {
+    stayId,
+    checkIn,
+    checkOut,
+    guests = 1,
+  } = bookingData;
 
   const stay = await Stay.findById(stayId).lean();
 
@@ -25,6 +30,30 @@ const createBooking = async (bookingData, userId) => {
   if (!summary) {
     throw new Error("Invalid booking dates");
   }
+
+  // ==========================
+  // Check Availability
+  // ==========================
+
+  const existingBooking = await Booking.findOne({
+    stay: stayId,
+    checkIn: {
+      $lt: checkOut,
+    },
+    checkOut: {
+      $gt: checkIn,
+    },
+  });
+
+  if (existingBooking) {
+    throw new Error(
+      "This stay is already booked for selected dates"
+    );
+  }
+
+  // ==========================
+  // Create Booking
+  // ==========================
 
   const booking = await Booking.create({
     user: userId,
@@ -57,7 +86,6 @@ const getBookings = async (userId) => {
 // ==========================
 
 const getHostBookings = async (hostId) => {
-
   // Find all stays owned by host
 
   const hostStays = await Stay.find({

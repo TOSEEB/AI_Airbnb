@@ -66,6 +66,19 @@ const userSchema = new mongoose.Schema(
         ref: "Stay",
       },
     ],
+
+    // AI Usage Tracking
+    aiUsage: {
+      count: {
+        type: Number,
+        default: 0,
+      },
+
+      lastUsed: {
+        type: Date,
+        default: null,
+      },
+    },
   },
   {
     timestamps: true,

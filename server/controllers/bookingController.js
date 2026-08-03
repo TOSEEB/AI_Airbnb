@@ -10,7 +10,6 @@ const {
 
 const bookStay = async (req, res) => {
   try {
-
     const data = await createBooking(
       req.body,
       req.user.id
@@ -31,6 +30,19 @@ const bookStay = async (req, res) => {
     }
 
     if (err.message === "Invalid booking dates") {
+      return res.status(400).json({
+        message: err.message,
+      });
+    }
+
+    // ==========================
+    // Booking Availability Error
+    // ==========================
+
+    if (
+      err.message ===
+      "This stay is already booked for selected dates"
+    ) {
       return res.status(400).json({
         message: err.message,
       });

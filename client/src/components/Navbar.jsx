@@ -12,64 +12,39 @@ const Navbar = () => {
 
   const menuRef = useRef(null);
 
-
   // Close dropdown when clicking outside
   useEffect(() => {
     const handler = (e) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(e.target)
-      ) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
         setShowMenu(false);
       }
     };
 
-    document.addEventListener(
-      "mousedown",
-      handler
-    );
+    document.addEventListener("mousedown", handler);
 
-    return () =>
-      document.removeEventListener(
-        "mousedown",
-        handler
-      );
-
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-
-
   const handleLogout = async () => {
-
     await logout();
 
     setShowMenu(false);
 
     navigate("/login");
-
   };
-
-
 
   const closeMenu = () => {
     setShowMenu(false);
   };
-
-
 
   const activeLink = ({ isActive }) =>
     isActive
       ? "text-rose-500 font-semibold"
       : "text-gray-700 hover:text-rose-500";
 
-
-
   return (
     <nav className="shadow-md sticky top-0 bg-white z-50">
-
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-
         {/* Logo */}
 
         <Link
@@ -80,105 +55,47 @@ const Navbar = () => {
           AI Airbnb
         </Link>
 
-
-
-
         {/* Desktop links */}
 
         <div className="hidden md:flex gap-8">
-
           <NavLink to="/" className={activeLink}>
             Home
           </NavLink>
 
-
-          <NavLink to="/stays" className={activeLink}>
-            Stays
-          </NavLink>
-
-
           {user && (
             <>
-
-              <NavLink
-                to="/bookings"
-                className={activeLink}
-              >
+              <NavLink to="/bookings" className={activeLink}>
                 Bookings
               </NavLink>
 
-
-              <NavLink
-                to="/dashboard"
-                className={activeLink}
-              >
+              <NavLink to="/dashboard" className={activeLink}>
                 Dashboard
               </NavLink>
-
-
             </>
           )}
 
-
-          <NavLink
-            to="/ai"
-            className={activeLink}
-          >
+          <NavLink to="/ai" className={activeLink}>
             AI Planner
           </NavLink>
-
-
         </div>
-
-
-
-
-
 
         {/* Right side */}
 
         <div className="flex items-center gap-5">
+          {user && (
+            <Link to="/favorites">
+              <FaHeart size={22} className="text-gray-600 hover:text-red-500" />
+            </Link>
+          )}
 
+          {user ? (
+            <div className="relative" ref={menuRef}>
+              {/* Profile button */}
 
-          {
-            user && (
+              <button
+                onClick={() => setShowMenu(!showMenu)}
 
-              <Link to="/favorites">
-
-                <FaHeart
-                  size={22}
-                  className="text-gray-600 hover:text-red-500"
-                />
-
-              </Link>
-
-            )
-          }
-
-
-
-
-
-
-          {
-            user ? (
-
-              <div
-                className="relative"
-                ref={menuRef}
-              >
-
-
-
-                {/* Profile button */}
-
-                <button
-
-                  onClick={() =>
-                    setShowMenu(!showMenu)
-                  }
-
-                  className="
+                className="
                     flex
                     items-center
                     gap-3
@@ -189,32 +106,17 @@ const Navbar = () => {
                     hover:shadow-md
                     transition
                   "
+              >
+                <FaBars />
 
-                >
+                <FaUserCircle size={30} className="text-gray-600" />
+              </button>
 
-                  <FaBars />
+              {/* Dropdown */}
 
-                  <FaUserCircle
-                    size={30}
-                    className="text-gray-600"
-                  />
-
-
-                </button>
-
-
-
-
-
-
-                {/* Dropdown */}
-
-                {
-                  showMenu && (
-
-                    <div
-
-                      className="
+              {showMenu && (
+                <div
+                  className="
                       absolute
                       right-0
                       mt-3
@@ -225,239 +127,139 @@ const Navbar = () => {
                       border
                       overflow-hidden
                       "
+                >
+                  {/* User info */}
 
-                    >
-
-
-
-                      {/* User info */}
-
-                      <div
-                        className="
+                  <div
+                    className="
                         px-5
                         py-4
                         border-b
                         "
-                      >
-
-                        <h3
-                          className="
+                  >
+                    <h3
+                      className="
                           font-semibold
                           text-gray-900
                           "
-                        >
+                    >
+                      {user.name || "User"}
+                    </h3>
 
-                          {user.name || "User"}
-
-                        </h3>
-
-
-                        <p
-                          className="
+                    <p
+                      className="
                           text-sm
                           text-gray-500
                           "
-                        >
+                    >
+                      {user.email}
+                    </p>
+                  </div>
 
-                          {user.email}
+                  <Link
+                    to="/profile"
 
-                        </p>
+                    onClick={closeMenu}
 
-
-                      </div>
-
-
-
-
-
-
-
-                      <Link
-
-                        to="/profile"
-
-                        onClick={closeMenu}
-
-                        className="
+                    className="
                         block
                         px-5
                         py-3
                         hover:bg-gray-100
                         "
+                  >
+                    My Profile
+                  </Link>
 
-                      >
+                  <Link
+                    to="/bookings"
 
-                        My Profile
+                    onClick={closeMenu}
 
-                      </Link>
-
-
-
-
-
-
-                      <Link
-
-                        to="/bookings"
-
-                        onClick={closeMenu}
-
-                        className="
+                    className="
                         block
                         px-5
                         py-3
                         hover:bg-gray-100
                         "
+                  >
+                    My Bookings
+                  </Link>
 
-                      >
+                  <Link
+                    to="/favorites"
 
-                        My Bookings
+                    onClick={closeMenu}
 
-                      </Link>
-
-
-
-
-
-
-                      <Link
-
-                        to="/favorites"
-
-                        onClick={closeMenu}
-
-                        className="
+                    className="
                         block
                         px-5
                         py-3
                         hover:bg-gray-100
                         "
+                  >
+                    Favorites
+                  </Link>
 
-                      >
+                  <Link
+                    to="/dashboard"
 
-                        Favorites
+                    onClick={closeMenu}
 
-                      </Link>
-
-
-
-
-
-
-
-                      <Link
-
-                        to="/dashboard"
-
-                        onClick={closeMenu}
-
-                        className="
+                    className="
                         block
                         px-5
                         py-3
                         hover:bg-gray-100
                         "
+                  >
+                    Dashboard
+                  </Link>
 
-                      >
+                  {user.role === "host" && (
+                    <Link
+                      to="/host/dashboard"
 
-                        Dashboard
+                      onClick={closeMenu}
 
-                      </Link>
-
-
-
-
-
-
-
-                      {
-                        user.role === "host" && (
-
-                          <Link
-
-                            to="/host/dashboard"
-
-                            onClick={closeMenu}
-
-                            className="
+                      className="
                             block
                             px-5
                             py-3
                             hover:bg-gray-100
                             "
+                    >
+                      Host Dashboard
+                    </Link>
+                  )}
 
-                          >
+                  <div className="border-t">
+                    <button
+                      onClick={handleLogout}
 
-                            Host Dashboard
-
-                          </Link>
-
-                        )
-                      }
-
-
-
-
-
-
-
-
-                      <div className="border-t">
-
-
-                        <button
-
-                          onClick={handleLogout}
-
-                          className="
+                      className="
                           w-full
                           text-left
                           px-5
                           py-3
                           hover:bg-gray-100
                           "
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="text-gray-700 hover:text-rose-500">
+                Login
+              </Link>
 
-                        >
-
-                          Logout
-
-                        </button>
-
-
-                      </div>
-
-
-
-
-
-
-                    </div>
-
-                  )
-
-                }
-
-
-
-              </div>
-
-
-            ) : (
-
-
-              <>
-
-                <Link
-                  to="/login"
-                  className="text-gray-700 hover:text-rose-500"
-                >
-                  Login
-                </Link>
-
-
-                <Link
-                  to="/register"
-                  className="
+              <Link
+                to="/register"
+                className="
                   bg-rose-500
                   text-white
                   px-4
@@ -465,28 +267,15 @@ const Navbar = () => {
                   rounded-lg
                   hover:bg-rose-600
                   "
-                >
-                  Register
-                </Link>
-
-
-              </>
-
-
-            )
-          }
-
-
-
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
-
-
       </div>
-
-
     </nav>
   );
 };
-
 
 export default Navbar;

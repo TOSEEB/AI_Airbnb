@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createStay } from "../api/stayApi";
+import { uploadImage } from "../api/uploadApi";
+import toast from "react-hot-toast";
 
 const AddStay = () => {
   const navigate = useNavigate();
@@ -13,10 +15,12 @@ const AddStay = () => {
     category: "Villa",
     bedrooms: 1,
     guests: 2,
-    images: [""],
+    images: [],
   });
 
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
 
   const handleChange = (e) => {
     setFormData({
@@ -28,55 +32,127 @@ const AddStay = () => {
     });
   };
 
-  const handleImageChange = (index, value) => {
-    const updated = [...formData.images];
-    updated[index] = value;
 
-    setFormData({
-      ...formData,
-      images: updated,
-    });
-  };
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
 
-  const addImageField = () => {
-    setFormData({
-      ...formData,
-      images: [...formData.images, ""],
-    });
-  };
-
-  const removeImageField = (index) => {
-    const updated = formData.images.filter((_, i) => i !== index);
-
-    setFormData({
-      ...formData,
-      images: updated.length ? updated : [""],
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (!files.length) return;
 
     try {
-      setLoading(true);
+      setUploading(true);
 
-      const payload = {
-        ...formData,
-        images: formData.images.filter((img) => img.trim() !== ""),
-      };
+      const uploadedImages = [];
 
-      await createStay(payload);
+      for (const file of files) {
+        const res = await uploadImage(file);
+        uploadedImages.push(res.imageUrl);
+      }
 
-      alert("Stay added successfully!");
+      setFormData((prev) => ({
+        ...prev,
+        images: [
+          ...prev.images,
+          ...uploadedImages,
+        ],
+      }));
 
-      navigate("/host/dashboard");
+      toast.success("Images uploaded successfully");
+
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to create stay");
+
+      toast.error("Image upload failed");
+
     } finally {
-      setLoading(false);
+      setUploading(false);
     }
   };
+
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+
+  // ==========================
+  // Frontend Validation
+  // ==========================
+
+  if (formData.images.length === 0) {
+    toast.error(
+      "Please upload at least one property image"
+    );
+    return;
+  }
+
+
+  if (formData.price <= 0) {
+    toast.error(
+      "Price must be greater than 0"
+    );
+    return;
+  }
+
+
+  if (formData.guests < 1) {
+    toast.error(
+      "Guests must be at least 1"
+    );
+    return;
+  }
+
+
+  if (formData.bedrooms < 1) {
+    toast.error(
+      "Bedrooms must be at least 1"
+    );
+    return;
+  }
+
+
+
+  try {
+
+    setLoading(true);
+
+
+    const payload = {
+      ...formData,
+      images: formData.images,
+    };
+
+
+    await createStay(payload);
+
+
+    toast.success(
+      "Stay added successfully!"
+    );
+
+
+    setTimeout(() => {
+      navigate("/host/dashboard");
+    }, 1000);
+
+
+
+  } catch (err) {
+
+    console.error(err);
+
+
+    toast.error(
+      err.response?.data?.message ||
+      "Failed to create stay"
+    );
+
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
+
 
   return (
     <div className="max-w-3xl mx-auto p-6">
@@ -85,12 +161,11 @@ const AddStay = () => {
         Add New Stay
       </h1>
 
+
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-xl p-6 space-y-6"
       >
-
-        {/* Title */}
 
         <div>
           <label className="font-semibold block mb-2">
@@ -108,7 +183,6 @@ const AddStay = () => {
           />
         </div>
 
-        {/* Location */}
 
         <div>
           <label className="font-semibold block mb-2">
@@ -126,7 +200,6 @@ const AddStay = () => {
           />
         </div>
 
-        {/* Price */}
 
         <div>
           <label className="font-semibold block mb-2">
@@ -143,7 +216,6 @@ const AddStay = () => {
           />
         </div>
 
-        {/* Description */}
 
         <div>
           <label className="font-semibold block mb-2">
@@ -160,7 +232,6 @@ const AddStay = () => {
           />
         </div>
 
-        {/* Category */}
 
         <div>
           <label className="font-semibold block mb-2">
@@ -182,7 +253,6 @@ const AddStay = () => {
           </select>
         </div>
 
-        {/* Guests */}
 
         <div className="grid grid-cols-2 gap-4">
 
@@ -201,6 +271,7 @@ const AddStay = () => {
             />
           </div>
 
+
           <div>
             <label className="font-semibold block mb-2">
               Bedrooms
@@ -218,61 +289,70 @@ const AddStay = () => {
 
         </div>
 
-        {/* Images */}
 
         <div>
 
-          <label className="font-semibold block mb-4">
-            Image URLs
+          <label className="font-semibold block mb-3">
+            Property Images
           </label>
 
-          {formData.images.map((img, index) => (
 
-            <div
-              key={index}
-              className="flex gap-2 mb-3"
-            >
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="mb-4"
+          />
 
-              <input
-                type="text"
-                value={img}
-                onChange={(e) =>
-                  handleImageChange(
-                    index,
-                    e.target.value
-                  )
-                }
-                className="flex-1 border rounded-lg p-3"
-                placeholder="https://example.com/image.jpg"
-              />
 
-              {formData.images.length > 1 && (
+          {uploading && (
+            <p className="text-blue-600">
+              Uploading images...
+            </p>
+          )}
+
+
+          <div className="grid grid-cols-3 gap-4">
+
+            {formData.images.map((image, index) => (
+
+              <div
+                key={index}
+                className="relative"
+              >
+
+                <img
+                  src={image}
+                  alt="Stay"
+                  className="h-32 w-full object-cover rounded-lg border"
+                />
+
+
                 <button
                   type="button"
                   onClick={() =>
-                    removeImageField(index)
+                    setFormData((prev) => ({
+                      ...prev,
+                      images:
+                        prev.images.filter(
+                          (_, i) => i !== index
+                        ),
+                    }))
                   }
-                  className="bg-red-500 text-white px-4 rounded-lg"
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7"
                 >
-                  X
+                  ×
                 </button>
-              )}
 
-            </div>
+              </div>
 
-          ))}
+            ))}
 
-          <button
-            type="button"
-            onClick={addImageField}
-            className="text-rose-500 font-semibold"
-          >
-            + Add Another Image
-          </button>
+          </div>
 
         </div>
 
-        {/* Buttons */}
 
         <div className="flex gap-4">
 
@@ -281,12 +361,17 @@ const AddStay = () => {
             disabled={loading}
             className="bg-rose-500 text-white px-6 py-3 rounded-lg hover:bg-rose-600"
           >
-            {loading ? "Saving..." : "Save Stay"}
+            {loading
+              ? "Saving..."
+              : "Save Stay"}
           </button>
+
 
           <button
             type="button"
-            onClick={() => navigate("/host/dashboard")}
+            onClick={() =>
+              navigate("/host/dashboard")
+            }
             className="border px-6 py-3 rounded-lg"
           >
             Cancel
@@ -294,10 +379,11 @@ const AddStay = () => {
 
         </div>
 
+
       </form>
 
     </div>
   );
 };
 
-export default AddStay;
+export default AddStay; 

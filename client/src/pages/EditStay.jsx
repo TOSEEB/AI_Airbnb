@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+
 import {
   getStayById,
   updateStay,
@@ -7,11 +9,9 @@ import {
 
 const EditStay = () => {
   const { id } = useParams();
-
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-
   const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -48,13 +48,17 @@ const EditStay = () => {
             ? stay.images
             : [""],
       });
+
     } catch (err) {
       console.error(err);
-      alert("Unable to load stay");
+
+      toast.error("Unable to load stay");
+
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleChange = (e) => {
     setFormData({
@@ -65,6 +69,7 @@ const EditStay = () => {
           : e.target.value,
     });
   };
+
 
   const handleImageChange = (index, value) => {
     const updated = [...formData.images];
@@ -77,12 +82,17 @@ const EditStay = () => {
     });
   };
 
+
   const addImage = () => {
     setFormData({
       ...formData,
-      images: [...formData.images, ""],
+      images: [
+        ...formData.images,
+        "",
+      ],
     });
   };
+
 
   const removeImage = (index) => {
     const updated = formData.images.filter(
@@ -91,9 +101,12 @@ const EditStay = () => {
 
     setFormData({
       ...formData,
-      images: updated.length ? updated : [""],
+      images: updated.length
+        ? updated
+        : [""],
     });
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -108,20 +121,32 @@ const EditStay = () => {
         ),
       });
 
-      alert("Stay updated successfully");
 
-      navigate("/host/dashboard");
+      toast.success(
+        "Stay updated successfully"
+      );
+
+
+      setTimeout(() => {
+        navigate("/host/dashboard");
+      }, 1000);
+
+
     } catch (err) {
       console.error(err);
 
-      alert(
+
+      toast.error(
         err.response?.data?.message ||
-          "Update failed"
+        "Update failed"
       );
+
+
     } finally {
       setSaving(false);
     }
   };
+
 
   if (loading)
     return (
@@ -130,12 +155,14 @@ const EditStay = () => {
       </div>
     );
 
+
   return (
     <div className="max-w-3xl mx-auto p-6">
 
       <h1 className="text-3xl font-bold mb-8">
         Edit Stay
       </h1>
+
 
       <form
         onSubmit={handleSubmit}
@@ -151,6 +178,7 @@ const EditStay = () => {
           required
         />
 
+
         <input
           className="w-full border rounded-lg p-3"
           name="location"
@@ -159,6 +187,7 @@ const EditStay = () => {
           onChange={handleChange}
           required
         />
+
 
         <input
           type="number"
@@ -170,6 +199,7 @@ const EditStay = () => {
           required
         />
 
+
         <textarea
           rows="5"
           className="w-full border rounded-lg p-3"
@@ -179,6 +209,7 @@ const EditStay = () => {
           onChange={handleChange}
           required
         />
+
 
         <select
           name="category"
@@ -194,6 +225,7 @@ const EditStay = () => {
           <option>Hotel</option>
         </select>
 
+
         <div className="grid grid-cols-2 gap-4">
 
           <input
@@ -204,6 +236,7 @@ const EditStay = () => {
             className="border rounded-lg p-3"
             placeholder="Guests"
           />
+
 
           <input
             type="number"
@@ -216,14 +249,15 @@ const EditStay = () => {
 
         </div>
 
+
         <div>
 
           <h3 className="font-semibold mb-3">
             Images
           </h3>
 
-          {formData.images.map((img, index) => (
 
+          {formData.images.map((img,index)=>(
             <div
               key={index}
               className="flex gap-2 mb-3"
@@ -232,7 +266,7 @@ const EditStay = () => {
               <input
                 className="flex-1 border rounded-lg p-3"
                 value={img}
-                onChange={(e) =>
+                onChange={(e)=>
                   handleImageChange(
                     index,
                     e.target.value
@@ -240,8 +274,8 @@ const EditStay = () => {
                 }
               />
 
-              {formData.images.length > 1 && (
 
+              {formData.images.length > 1 && (
                 <button
                   type="button"
                   onClick={() =>
@@ -251,12 +285,11 @@ const EditStay = () => {
                 >
                   X
                 </button>
-
               )}
 
             </div>
-
           ))}
+
 
           <button
             type="button"
@@ -268,14 +301,18 @@ const EditStay = () => {
 
         </div>
 
+
         <div className="flex gap-4">
 
           <button
             disabled={saving}
             className="bg-rose-500 text-white px-6 py-3 rounded-lg hover:bg-rose-600"
           >
-            {saving ? "Updating..." : "Update Stay"}
+            {saving
+              ? "Updating..."
+              : "Update Stay"}
           </button>
+
 
           <button
             type="button"
@@ -288,6 +325,7 @@ const EditStay = () => {
           </button>
 
         </div>
+
 
       </form>
 

@@ -6,7 +6,7 @@ const initialStays = [
   {
     title: "Luxury Sea View Apartment",
     location: "Mumbai, Maharashtra",
-    price: 9500,
+    price: 1500,
    images: [
   "/images/stay1/property_1_img1.jpg",
   "/images/stay1/property_1_img2.jpg",
@@ -24,7 +24,7 @@ const initialStays = [
   {
     title: "Tech City Loft",
     location: "Bengaluru, Karnataka",
-    price: 7200,
+    price: 1200,
     images: [
   "/images/stay2/property_2_img1.png",
   "/images/stay2/property_2_img2.png",
@@ -42,7 +42,7 @@ const initialStays = [
   {
     title: "Skyline Penthouse",
     location: "Hyderabad, Telangana",
-    price: 8500,
+    price: 1450,
     images: [
   "/images/stay3/property_3_img1.png",
   "/images/stay3/property_3_img2.png",
@@ -60,7 +60,7 @@ const initialStays = [
   {
     title: "Royal Heritage Villa",
     location: "Jaipur, Rajasthan",
-    price: 8900,
+    price: 2000,
     images: [
   "/images/stay4/property_4_img1.png",
   "/images/stay4/property_4_img2.png",
@@ -78,7 +78,7 @@ const initialStays = [
   {
     title: "Beach Paradise Villa",
     location: "Goa",
-    price: 12500,
+    price: 2400,
     images: [
   "/images/stay5/property_5_img1.png",
   "/images/stay5/property_5_img2.png",
@@ -96,7 +96,7 @@ const initialStays = [
   {
     title: "Mountain Escape Cabin",
     location: "Manali, Himachal Pradesh",
-    price: 6800,
+    price: 3000,
    images: [
   "/images/stay6/property_6_img1.png",
   "/images/stay6/property_6_img2.png",
@@ -114,7 +114,7 @@ const initialStays = [
   {
     title: "Lake Palace Stay",
     location: "Udaipur, Rajasthan",
-    price: 9800,
+    price: 5600,
     images: [
   "/images/stay7/property_7_img1.png",
   "/images/stay7/property_7_img2.png",
@@ -132,7 +132,7 @@ const initialStays = [
   {
     title: "Coffee Estate Cottage",
     location: "Coorg, Karnataka",
-    price: 5900,
+    price: 4200,
     images: [
   "/images/stay8/property_8_img1.png",
   "/images/stay8/property_8_img2.png",
@@ -150,7 +150,7 @@ const initialStays = [
   {
     title: "Marina Luxury Apartment",
     location: "Chennai, Tamil Nadu",
-    price: 7000,
+    price: 1000,
     images: [
   "/images/stay9/property_9_img1.png",
   "/images/stay9/property_9_img2.png",
@@ -168,7 +168,7 @@ const initialStays = [
   {
     title: "Tea Garden Retreat",
     location: "Munnar, Kerala",
-    price: 6200,
+    price: 3400,
     images: [
   "/images/stay10/property_10_img1.png",
   "/images/stay10/property_10_img2.png",
@@ -185,7 +185,7 @@ const initialStays = [
   {
   title: "Skyline Luxury Suite",
   location: "Pune, Maharashtra",
-  price: 7200,
+  price: 3450,
   images: [
 "/images/stay11/property_11_img1.png",
 "/images/stay11/property_11_img2.png",
@@ -203,7 +203,7 @@ const initialStays = [
 {
   title: "Royal Desert Haveli",
   location: "Jaisalmer, Rajasthan",
-  price: 8600,
+  price: 1220,
   images: [
 "/images/stay12/property_12_img1.png",
 "/images/stay12/property_12_img2.png",
@@ -221,7 +221,7 @@ const initialStays = [
 {
   title: "Kerala Backwater Retreat",
   location: "Alleppey, Kerala",
-  price: 7800,
+  price: 2400,
   images: [
 "/images/stay13/property_13_img1.png",
 "/images/stay13/property_13_img2.png",
@@ -239,7 +239,7 @@ const initialStays = [
 {
   title: "Hill View Cottage",
   location: "Ooty, Tamil Nadu",
-  price: 6200,
+  price: 2650,
   images: [
 "/images/stay14/property_14_img1.png",
 "/images/stay14/property_14_img2.png",
@@ -257,7 +257,7 @@ const initialStays = [
 {
   title: "Lakefront Luxury Villa",
   location: "Nainital, Uttarakhand",
-  price: 9800,
+  price: 3000,
   images: [
 "/images/stay15/property_15_img1.png",
 "/images/stay15/property_15_img2.png",
@@ -275,7 +275,7 @@ const initialStays = [
 {
   title: "City Lights Penthouse",
   location: "New Delhi",
-  price: 9900,
+  price: 1999,
   images: [
 "/images/stay16/property_16_img1.png",
 "/images/stay16/property_16_img2.png",
@@ -293,7 +293,7 @@ const initialStays = [
 {
   title: "Snow Peak Cabin",
   location: "Shimla, Himachal Pradesh",
-  price: 6900,
+  price: 4000,
  images: [
 "/images/stay17/property_17_img1.png",
 "/images/stay17/property_17_img2.png",
@@ -329,7 +329,7 @@ const initialStays = [
 {
   title: "Tea Estate Bungalow",
   location: "Darjeeling, West Bengal",
-  price: 7400,
+  price: 4500,
  images: [
 "/images/stay19/property_19_img1.png",
 "/images/stay19/property_19_img2.png",
@@ -347,7 +347,7 @@ const initialStays = [
 {
   title: "Island Paradise Villa",
   location: "Port Blair, Andaman & Nicobar Islands",
-  price: 11800,
+  price: 1180,
   images: [
 "/images/stay20/property_20_img1.png",
 "/images/stay20/property_20_img2.png",
@@ -365,7 +365,7 @@ const initialStays = [
 {
   title: "Sabarmati Riverfront Apartment",
   location: "Ahmedabad, Gujarat",
-  price: 6400,
+  price: 2220,
   images: [
 "/images/stay21/property_21_img1.png",
 "/images/stay21/property_21_img2.png",
@@ -383,7 +383,7 @@ const initialStays = [
 {
   title: "Kochi Waterfront Villa",
   location: "Kochi, Kerala",
-  price: 7900,
+  price: 3450,
   images: [
 "/images/stay22/property_22_img1.png",
 "/images/stay22/property_22_img2.png",
@@ -437,7 +437,7 @@ const initialStays = [
 {
   title: "Alibaug Beach Villa",
   location: "Alibaug, Maharashtra",
-  price: 13200,
+  price: 2000,
   images: [
 "/images/stay25/property_25_img1.png",
 "/images/stay25/property_25_img2.png",
@@ -473,7 +473,7 @@ const initialStays = [
 {
   title: "Mussoorie Hill Cottage",
   location: "Mussoorie, Uttarakhand",
-  price: 6700,
+  price: 4000,
   images: [
 "/images/stay27/property_27_img1.png",
 "/images/stay27/property_27_img2.png",
@@ -491,7 +491,7 @@ const initialStays = [
 {
   title: "Dal Lake Houseboat",
   location: "Srinagar, Jammu & Kashmir",
-  price: 8900,
+  price: 1200,
   images: [
 "/images/stay28/property_28_img1.png",
 "/images/stay28/property_28_img2.png",
@@ -509,7 +509,7 @@ const initialStays = [
 {
   title: "Ganges Heritage Stay",
   location: "Varanasi, Uttar Pradesh",
-  price: 5600,
+  price: 4000,
   images: [
 "/images/stay29/property_29_img1.png",
 "/images/stay29/property_29_img2.png",
@@ -527,7 +527,7 @@ const initialStays = [
 {
   title: "Chandigarh Designer Apartment",
   location: "Chandigarh",
-  price: 6500,
+  price: 2450,
   images: [
 "/images/stay30/property_30_img1.png",
 "/images/stay30/property_30_img2.png",
@@ -546,18 +546,23 @@ const initialStays = [
 console.log("Total stays:", initialStays.length);
 
 
-
 const seedStays = async () => {
   try {
+    console.log("Checking stays...");
+
+    const count = await StayModel.countDocuments();
+
+    if (count > 0) {
+      console.log(`Stays already exist (${count}). Skipping seed.`);
+      return;
+    }
+
     console.log("Seeding started...");
 
-    const deleted = await StayModel.deleteMany({});
-    console.log("Deleted:", deleted.deletedCount);
-
     const inserted = await StayModel.insertMany(initialStays);
-    console.log("Inserted:", inserted.length);
 
-    console.log("✅ 30 properties inserted successfully!");
+    console.log(`Inserted ${inserted.length} stays successfully!`);
+
   } catch (err) {
     console.error("Seed Error:");
     console.error(err);

@@ -1,0 +1,65 @@
+src/
+
+├── api/
+│   ├── axios.js
+│   ├── authApi.js
+│   ├── stayApi.js
+│   ├── bookingApi.js
+│   ├── reviewApi.js
+│   ├── dashboardApi.js
+│   ├── favoriteApi.js
+│   ├── adminApi.js
+│   └── aiApi.js
+│
+├── assets/
+│
+├── components/
+│   ├── Navbar.jsx
+│   ├── Footer.jsx
+│   ├── StayCard.jsx
+│   ├── BookingCard.jsx
+│   ├── ReviewCard.jsx
+│   ├── SearchBar.jsx
+│   ├── FilterBar.jsx
+│   ├── Hero.jsx
+│   ├── Loader.jsx
+│   ├── ProtectedRoute.jsx
+│   └── HostRoute.jsx
+│
+├── context/
+│   ├── AuthContext.jsx
+│   └── FavoriteContext.jsx
+│
+├── hooks/
+│   ├── useAuth.js
+│   ├── useBookings.js
+│   ├── useFavorites.js
+│   └── useReviews.js
+│
+├── layouts/
+│   └── MainLayout.jsx
+│
+├── pages/
+│   ├── Home.jsx
+│   ├── Login.jsx
+│   ├── Register.jsx
+│   ├── StayDetails.jsx
+│   ├── Dashboard.jsx
+│   ├── Bookings.jsx
+│   ├── Favorites.jsx
+│   ├── AdminDashboard.jsx
+│   ├── AIRecommendation.jsx
+│   ├── NotFound.jsx
+│   └── Profile.jsx
+│
+├── routes/
+│   └── AppRoutes.jsx
+│
+├── utils/
+│   ├── formatDate.js
+│   ├── formatCurrency.js
+│   └── calculateNights.js
+│
+├── App.jsx
+├── main.jsx
+└── index.css

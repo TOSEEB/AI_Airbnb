@@ -3,20 +3,17 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/auth");
-
 const aiLimiter = require("../middleware/aiLimiter");
 
 const {
-  getRecommendation
-} = require("../controllers/aiController");
-
+  chatWithAI,
+} = require("../controllers/chatController");
 
 router.post(
-  "/recommendation",
+  "/chat",
   auth,
   aiLimiter,
-  getRecommendation
+  chatWithAI
 );
-
 
 module.exports = router;

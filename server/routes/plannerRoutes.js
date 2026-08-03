@@ -3,20 +3,17 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/auth");
-
 const aiLimiter = require("../middleware/aiLimiter");
 
 const {
-  getRecommendation
-} = require("../controllers/aiController");
-
+  getPlannerRecommendation,
+} = require("../controllers/plannerController");
 
 router.post(
-  "/recommendation",
+  "/planner",
   auth,
   aiLimiter,
-  getRecommendation
+  getPlannerRecommendation
 );
-
 
 module.exports = router;
