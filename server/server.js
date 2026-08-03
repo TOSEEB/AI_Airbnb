@@ -6,15 +6,23 @@ const { port } = require("./utils/env");
 
 const PORT = port;
 
-connectDatabase()
-  .then(() => {
-    console.log("Database connected");
+if (process.env.NODE_ENV !== "production") {
+  connectDatabase()
+    .then(() => {
+      console.log("Database connected");
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error("Database connection failed:", error);
+      process.exit(1);
     });
-  })
-  .catch((error) => {
+} else {
+  connectDatabase().catch((error) => {
     console.error("Database connection failed:", error);
-    process.exit(1);
   });
+}
+
+module.exports = app;
