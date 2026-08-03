@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const { isProduction } = require("./utils/env");
+const { connectDatabase } = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
 const stayRoutes = require("./routes/stayRoutes");
@@ -25,6 +26,11 @@ const sendOTPEmail = require("./services/emailService");
 
 const app = express();
 
+// Connect MongoDB once
+connectDatabase().catch((err) => {
+  console.error("MongoDB startup failed:", err);
+});
+
 app.use(
   cors({
     origin: isProduction
@@ -38,66 +44,46 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
-
 // =======================
 // Test Email Route
 // =======================
 
 app.get("/test-email", async (req, res) => {
   try {
-    await sendOTPEmail(
-      "toseebbeg02@gmail.com",
-      "483921"
-    );
-
+    await sendOTPEmail("toseebbeg02@gmail.com", "483921");
     res.send("Email sent successfully");
-
   } catch (error) {
     console.log(error);
-
     res.status(500).send("Email failed");
   }
 });
-
 
 // =======================
 // API Routes
 // =======================
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/stays", stayRoutes);
-
 app.use("/api/bookings", bookingRoutes);
-
 app.use("/api/payments", paymentRoutes);
-
 app.use("/api/reviews", reviewRoutes);
-
 app.use("/api/dashboard", dashboardRoutes);
-
 app.use("/api/favorites", favoriteRoutes);
-
 app.use("/api/admin", adminRoutes);
-
 
 // =======================
 // AI Routes
 // =======================
 
 app.use("/api/ai", aiRoutes);
-
 app.use("/api/ai", plannerRoutes);
-
 app.use("/api/ai", chatRoutes);
-
 
 // =======================
 // Upload
 // =======================
 
 app.use("/api/upload", uploadRoutes);
-
 
 // =======================
 // Root Route
@@ -110,7 +96,6 @@ app.get("/", (req, res) => {
   });
 });
 
-
 // =======================
 // Health Check
 // =======================
@@ -118,28 +103,17 @@ app.get("/", (req, res) => {
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
-
-    // Check if Vercel received MONGO_URI
     mongoUriExists: !!process.env.MONGO_URI,
-
-    // 0 = disconnected
-    // 1 = connected
-    // 2 = connecting
-    // 3 = disconnecting
     dbState: mongoose.connection.readyState,
-
     dbName: mongoose.connection.name || null,
-
     timestamp: new Date().toISOString(),
   });
 });
-
 
 // =======================
 // Error Handler
 // =======================
 
 app.use(errorHandler);
-
 
 module.exports = app;
