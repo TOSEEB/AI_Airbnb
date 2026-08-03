@@ -11,9 +11,7 @@ const Footer = () => {
   return (
     <footer className="bg-gray-100 border-t mt-16">
       <div className="max-w-7xl mx-auto px-6 py-12">
-
-        <div className="grid md:grid-cols-4 gap-10">
-
+        <div className="grid md:grid-cols-3 gap-10">
           {/* Logo */}
           <div>
             <div className="flex items-center gap-2 text-2xl font-bold text-rose-500">
@@ -35,55 +33,29 @@ const Footer = () => {
 
             <ul className="space-y-2 text-gray-600">
               <li>
-                <Link to="/">Home</Link>
+                <Link to="/" className="hover:text-rose-500 transition">
+                  Home
+                </Link>
               </li>
 
               <li>
-                <Link to="/stays">Stays</Link>
+                <Link to="/stays" className="hover:text-rose-500 transition">
+                  Stays
+                </Link>
               </li>
 
               <li>
-                <Link to="/ai">
+                <Link to="/ai" className="hover:text-rose-500 transition">
                   AI Planner
                 </Link>
               </li>
 
               <li>
-                <Link to="/favorites">
+                <Link
+                  to="/favorites"
+                  className="hover:text-rose-500 transition"
+                >
                   Favorites
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Account */}
-          <div>
-            <h3 className="font-semibold mb-4 text-lg">
-              Account
-            </h3>
-
-            <ul className="space-y-2 text-gray-600">
-              <li>
-                <Link to="/login">
-                  Login
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/register">
-                  Register
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/dashboard">
-                  Dashboard
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/bookings">
-                  Bookings
                 </Link>
               </li>
             </ul>
@@ -95,55 +67,63 @@ const Footer = () => {
               Follow Us
             </h3>
 
-            <div className="flex gap-4 text-2xl text-gray-600">
-
-              <a href="#">
+            <div className="flex gap-5 text-2xl text-gray-600">
+              <a
+                href="#"
+                className="hover:text-blue-600 transition"
+                aria-label="Facebook"
+              >
                 <FaFacebook />
               </a>
 
-              <a href="#">
+              <a
+                href="#"
+                className="hover:text-pink-500 transition"
+                aria-label="Instagram"
+              >
                 <FaInstagram />
               </a>
 
-              <a href="#">
+              <a
+                href="#"
+                className="hover:text-sky-500 transition"
+                aria-label="Twitter"
+              >
                 <FaTwitter />
               </a>
 
-              <a href="#">
+              <a
+                href="#"
+                className="hover:text-black transition"
+                aria-label="GitHub"
+              >
                 <FaGithub />
               </a>
-
             </div>
           </div>
-
         </div>
 
         <hr className="my-8" />
 
         <div className="flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
-
           <p>
             © {new Date().getFullYear()} AI Airbnb. All rights reserved.
           </p>
 
           <div className="flex gap-6 mt-3 md:mt-0">
-
-            <Link to="#">
+            <Link to="#" className="hover:text-rose-500 transition">
               Privacy Policy
             </Link>
 
-            <Link to="#">
+            <Link to="#" className="hover:text-rose-500 transition">
               Terms of Service
             </Link>
 
-            <Link to="#">
+            <Link to="#" className="hover:text-rose-500 transition">
               Contact
             </Link>
-
           </div>
-
         </div>
-
       </div>
     </footer>
   );

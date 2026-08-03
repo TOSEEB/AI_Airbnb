@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const { isProduction } = require("./utils/env");
 
 const authRoutes = require("./routes/authRoutes");
 const stayRoutes = require("./routes/stayRoutes");
@@ -25,12 +26,13 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: isProduction ? process.env.CLIENT_URL || "" : "http://localhost:5173",
     credentials: true,
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
 // =======================
@@ -93,7 +95,17 @@ app.use("/api/upload", uploadRoutes);
 // =======================
 
 app.get("/", (req, res) => {
-  res.send("AI Airbnb API is running");
+  res.json({
+    message: "AI Airbnb API is running",
+    status: "ok",
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // =======================

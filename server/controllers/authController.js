@@ -15,6 +15,10 @@ const {
   getUserByEmail,
   createUser,
 } = require("../services/authService");
+const {
+  validateSignupInput,
+  validateLoginInput,
+} = require("../utils/validators");
 
 
 // ======================
@@ -25,8 +29,12 @@ const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    const validation = validateSignupInput({ name, email, password });
+    if (!validation.isValid) {
+      return res.status(400).json({ message: validation.message });
+    }
 
-    const existing = await getUserByEmail(email);
+    const existing = await getUserByEmail(email.trim().toLowerCase());
 
     if (existing) {
       return res.status(400).json({
@@ -35,8 +43,9 @@ const signup = async (req, res) => {
     }
 
 
+    const normalizedEmail = email.trim().toLowerCase();
     const role =
-      email.includes("host") || email.includes("admin")
+      normalizedEmail.includes("host") || normalizedEmail.includes("admin")
         ? "host"
         : "guest";
 
@@ -47,8 +56,8 @@ const signup = async (req, res) => {
 
     // Create user but not verified
     const user = await createUser({
-      name,
-      email,
+      name: name.trim(),
+      email: normalizedEmail,
       password,
       role,
 
@@ -61,7 +70,7 @@ const signup = async (req, res) => {
 
 
     // Send OTP email
-    await sendOTPEmail(email, otp);
+    await sendOTPEmail(normalizedEmail, otp);
 
 
     res.status(201).json({
@@ -93,8 +102,13 @@ const login = async (req, res) => {
 
     const { email, password } = req.body;
 
+    const validation = validateLoginInput({ email, password });
+    if (!validation.isValid) {
+      return res.status(400).json({ message: validation.message });
+    }
 
-    const user = await getUserByEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await getUserByEmail(normalizedEmail);
 
 
     if (!user) {
