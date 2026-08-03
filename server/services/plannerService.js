@@ -1,9 +1,11 @@
 const OpenAI = require("openai");
 
-const client = new OpenAI({
-  apiKey: process.env.AI_API_KEY,
-  baseURL: process.env.AI_BASE_URL,
-});
+const client = process.env.AI_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.AI_API_KEY,
+      baseURL: process.env.AI_BASE_URL,
+    })
+  : null;
 
 const generatePlannerRecommendation = async (prompt, stays) => {
   try {
@@ -42,6 +44,10 @@ Return ONLY valid JSON in this format:
   "reason": "Explain why this stay is the best choice in 3-4 sentences."
 }
 `;
+
+    if (!client) {
+      throw new Error("AI service is not configured. Please set AI_API_KEY.");
+    }
 
     const response = await client.chat.completions.create({
       model: "openai/gpt-4o-mini",

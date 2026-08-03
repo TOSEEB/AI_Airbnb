@@ -1,10 +1,11 @@
 const OpenAI = require("openai");
 
-
-const client = new OpenAI({
-  apiKey: process.env.AI_API_KEY,
-  baseURL: process.env.AI_BASE_URL,
-});
+const client = process.env.AI_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.AI_API_KEY,
+      baseURL: process.env.AI_BASE_URL,
+    })
+  : null;
 
 
 
@@ -67,6 +68,10 @@ Return ONLY valid JSON in exactly this format:
 `;
 
 
+
+    if (!client) {
+      throw new Error("AI service is not configured. Please set AI_API_KEY.");
+    }
 
     const response =
       await client.chat.completions.create({

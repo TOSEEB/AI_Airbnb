@@ -44,19 +44,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
-// =======================
-// Test Email Route
-// =======================
 
-app.get("/test-email", async (req, res) => {
-  try {
-    await sendOTPEmail("toseebbeg02@gmail.com", "483921");
-    res.send("Email sent successfully");
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Email failed");
-  }
-});
 
 // =======================
 // API Routes
