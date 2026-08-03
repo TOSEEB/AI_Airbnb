@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "npm --prefix client install && npm --prefix server install",
+  "installCommand": "ROOT_DIR=$(pwd); while [ ! -f \"$ROOT_DIR/client/package.json\" ] && [ \"$ROOT_DIR\" != \"/\" ]; do ROOT_DIR=$(dirname \"$ROOT_DIR\"); done; cd \"$ROOT_DIR\" || exit 1; npm --prefix client install && npm --prefix server install",
   "builds": [
     {
       "src": "server/api/index.js",
