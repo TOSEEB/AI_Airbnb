@@ -4,7 +4,7 @@ import Fuse from "fuse.js";
 import Hero from "../components/Hero";
 import FilterBar from "../components/FilterBar";
 import StayCard from "../components/StayCard";
-import Loader from "../components/Loader";
+import StayCardSkeleton from "../components/StayCardSkeleton";
 
 import { getAllStays } from "../api/stayApi";
 
@@ -17,18 +17,24 @@ const Home = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
+
   useEffect(() => {
     fetchStays();
   }, []);
 
+
   useEffect(() => {
+
     if (!stays.length) return;
 
     let data = [...stays];
 
+
     // Search
     if (search.trim()) {
+
       const fuse = new Fuse(stays, {
+
         keys: [
           "title",
           "location",
@@ -36,17 +42,28 @@ const Home = () => {
           "category",
           "type",
         ],
+
         threshold: 0.4,
         ignoreLocation: true,
         minMatchCharLength: 2,
+
       });
 
-      data = fuse.search(search).map((result) => result.item);
+
+      data = fuse
+        .search(search)
+        .map((result) => result.item);
+
     }
 
+
+
     // Category filter
+
     if (category !== "All") {
+
       const categoryMap = {
+
         Featured: [
           "Villa",
           "Penthouse",
@@ -83,20 +100,30 @@ const Home = () => {
           "Apartment",
           "Bungalow",
         ],
+
       };
 
-      const allowedCategories = categoryMap[category];
+
+      const allowedCategories =
+        categoryMap[category];
+
 
       if (allowedCategories) {
+
         data = data.filter((stay) =>
           allowedCategories.includes(stay.category)
         );
+
       }
+
     }
+
 
     setFilteredStays(data);
 
+
   }, [search, category, stays]);
+
 
 
   const fetchStays = async () => {
@@ -108,12 +135,15 @@ const Home = () => {
         import.meta.env.VITE_API_URL
       );
 
+
       const res = await getAllStays();
+
 
       console.log(
         "Backend response:",
         res
       );
+
 
 
       const staysData =
@@ -122,11 +152,17 @@ const Home = () => {
           : [];
 
 
+
       setStays(staysData);
+
       setFilteredStays(staysData);
+
       setError("");
 
+
+
     } catch (err) {
+
 
       console.error(
         "FETCH STAYS ERROR:",
@@ -138,16 +174,21 @@ const Home = () => {
         "Unable to load stays. Backend connection failed."
       );
 
+
     } finally {
 
       setLoading(false);
 
     }
+
   };
 
 
+
   return (
+
     <div>
+
 
       <Hero
         search={search}
@@ -156,10 +197,13 @@ const Home = () => {
       />
 
 
+
       <div
         id="stays-section"
         className="container mx-auto px-6 py-10"
       >
+
+
 
         <FilterBar
           selected={category}
@@ -167,59 +211,117 @@ const Home = () => {
         />
 
 
+
         {loading ? (
 
-          <Loader />
-
-        ) : error ? (
-
-          <div className="mt-12 text-center text-red-600">
-
-            <h2 className="text-2xl font-semibold">
-              {error}
-            </h2>
-
-            <p className="text-gray-500 mt-2">
-              Check browser console for API URL and backend response.
-            </p>
-
-          </div>
-
-        ) : filteredStays.length > 0 ? (
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
 
+            {Array(6)
+              .fill(0)
+              .map((_, index) => (
+
+                <StayCardSkeleton
+                  key={index}
+                />
+
+              ))}
+
+          </div>
+
+
+
+        ) : error ? (
+
+
+
+          <div className="mt-12 text-center text-red-600">
+
+
+            <h2 className="text-2xl font-semibold">
+
+              {error}
+
+            </h2>
+
+
+
+            <p className="text-gray-500 mt-2">
+
+              Check browser console for API URL and backend response.
+
+            </p>
+
+
+          </div>
+
+
+
+        ) : filteredStays.length > 0 ? (
+
+
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+
+
             {filteredStays.map((stay) => (
 
+
               <StayCard
+
                 key={stay._id}
+
                 stay={stay}
+
               />
+
 
             ))}
 
+
           </div>
+
+
 
         ) : (
 
+
+
           <div className="mt-12 text-center">
 
+
             <h2 className="text-2xl font-semibold text-gray-700">
+
               No stays found
+
             </h2>
 
+
+
             <p className="text-gray-500 mt-2">
+
               Try searching another city or category.
+
             </p>
+
+
 
           </div>
 
+
+
         )}
+
+
 
       </div>
 
+
     </div>
+
   );
+
 };
+
 
 export default Home;
