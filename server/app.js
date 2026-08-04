@@ -1,3 +1,4 @@
+console.log("APP START"); 
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -109,7 +110,7 @@ app.use("/api/upload", uploadRoutes);
 // =======================
 // ROOT ROUTE
 // =======================
-
+ 
 app.get("/", (req, res) => {
 
   res.json({
@@ -150,6 +151,7 @@ app.get("/api/test", (req, res) => {
 // =======================
 
 app.use(errorHandler);
+console.log("APP READY"); 
 
 module.exports = app;
 
