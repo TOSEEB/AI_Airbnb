@@ -1,7 +1,9 @@
+const serverless = require("serverless-http");
+
 const app = require("../app");
 
-module.exports = (req, res) => {
-  res.status(200).json({
-    message: "App loaded successfully"
-  });
+const handler = serverless(app);
+
+module.exports = async (req, res) => {
+  return handler(req, res);
 };
