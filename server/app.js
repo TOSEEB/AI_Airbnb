@@ -21,7 +21,7 @@ const mongoose = require("mongoose");
 
 // const errorHandler = require("./middleware/errorHandler");
 
-// const app = express();
+const app = express();
 
 // // =======================
 // // CORS
