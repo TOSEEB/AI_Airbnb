@@ -1,7 +1,14 @@
 const serverless = require("serverless-http");
 
-console.log("API FILE LOADED");
-
+const { connectDatabase } = require("../config/db");
 const app = require("../app");
 
-module.exports = serverless(app);
+const handler = serverless(app);
+
+module.exports = async (req, res) => {
+
+  await connectDatabase();
+
+  return handler(req, res);
+
+};

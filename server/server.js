@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 const app = require("./app");
 
 const { port } = require("./utils/env");
-
+const { seedStays } = require("./config/seedData");
 const PORT = port || 5000;
 
 
@@ -21,6 +21,9 @@ const connectDB = async () => {
     });
 
     console.log("✅ MongoDB Connected Successfully");
+
+    // Seed stays data
+    await seedStays();
 
   } catch (error) {
     console.error("❌ MongoDB Connection Failed:");
