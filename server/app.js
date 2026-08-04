@@ -113,7 +113,7 @@ app.use("/api/upload", uploadRoutes);
 app.get("/", (req, res) => {
 
   res.json({
-    message: "AI Airbnb API is running",
+     message: "DEPLOY TEST 12345",
     status: "ok",
   });
 
