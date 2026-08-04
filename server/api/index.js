@@ -3,7 +3,7 @@ console.log("VERCEL ENTRY START");
 
 const app = require("../app");
 
-const { connectDatabase } = require("../db");
+const { connectDatabase } = require("../config/db");
 
 
 // Connect MongoDB
@@ -23,4 +23,4 @@ connectDatabase()
 
 
 
-module.exports = app;
+module.exports = app; 
