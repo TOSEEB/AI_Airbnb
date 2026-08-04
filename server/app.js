@@ -1,3 +1,5 @@
+console.log("APP START");
+
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -22,6 +24,7 @@ const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
+
 // =======================
 // CORS
 // =======================
@@ -29,46 +32,65 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
+
+  // Frontend Vercel
+  "https://ai-airbnb-sand.vercel.app",
+
   process.env.CLIENT_URL,
-  process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : null,
+
 ].filter(Boolean);
+
 
 app.use(
   cors({
+
     origin: (origin, callback) => {
 
-      // Allow server-to-server and Postman requests
+      // Postman/server requests
       if (!origin) {
         return callback(null, true);
       }
+
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
+
+      console.log("Blocked CORS origin:", origin);
+
       return callback(null, false);
 
     },
+
     credentials: true,
+
   })
 );
+
 
 // =======================
 // BODY PARSERS
 // =======================
 
-app.use(express.json({ limit: "10mb" }));
-
 app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "10mb",
+  express.json({
+    limit:"10mb",
   })
 );
 
+
+app.use(
+  express.urlencoded({
+    extended:true,
+    limit:"10mb",
+  })
+);
+
+
 app.use(cookieParser());
+
+
 
 // =======================
 // API ROUTES
@@ -90,6 +112,7 @@ app.use("/api/favorites", favoriteRoutes);
 
 app.use("/api/admin", adminRoutes);
 
+
 // =======================
 // AI ROUTES
 // =======================
@@ -100,46 +123,53 @@ app.use("/api/ai", plannerRoutes);
 
 app.use("/api/ai", chatRoutes);
 
+
 // =======================
-// UPLOAD ROUTES
+// UPLOAD
 // =======================
 
 app.use("/api/upload", uploadRoutes);
 
+
+
 // =======================
-// ROOT ROUTE
+// ROOT
 // =======================
 
-app.get("/", (req, res) => {
+app.get("/", (req,res)=>{
 
   res.json({
-    message: "AI Airbnb API is running",
-    status: "ok",
+    message:"AI Airbnb API is running",
+    status:"ok",
   });
 
 });
 
+
+
 // =======================
-// HEALTH CHECK
+// HEALTH
 // =======================
 
-app.get("/health", (req, res) => {
+app.get("/health",(req,res)=>{
 
   res.json({
 
-    status: "ok",
+    status:"ok",
 
-    mongoUriExists: !!process.env.MONGO_URI,
+    mongoUriExists:!!process.env.MONGO_URI,
 
-    dbState: mongoose.connection.readyState,
+    dbState:mongoose.connection.readyState,
 
-    dbName: mongoose.connection.name || null,
+    dbName:mongoose.connection.name || null,
 
-    timestamp: new Date().toISOString(),
+    timestamp:new Date().toISOString(),
 
   });
 
 });
+
+
 
 // =======================
 // ERROR HANDLER
@@ -147,6 +177,8 @@ app.get("/health", (req, res) => {
 
 app.use(errorHandler);
 
-module.exports = app;
 
-//App.js backup end 
+console.log("APP READY");
+
+
+module.exports = app;
