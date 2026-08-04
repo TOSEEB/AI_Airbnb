@@ -52,18 +52,24 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
 app.use(async (req, res, next) => {
+  if (req.path === "/" || req.path === "/health") {
+    return next();
+  }
+
   if (mongoose.connection.readyState === 1) {
     return next();
   }
 
   try {
-    await connectDatabase();
+    await Promise.race([
+      connectDatabase(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("DB startup timeout")), 3000)),
+    ]);
     next();
   } catch (err) {
     console.error("Database connection failed during request:", err.message);
     res.status(503).json({
-      message:
-        "Service unavailable. Database connection failed. Check MONGO_URI.",
+      message: "Service unavailable. Database connection failed. Check MONGO_URI.",
     });
   }
 });
