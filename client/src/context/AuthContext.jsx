@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
       const res = await authApi.getProfile();
       setUser(res.data?.user ?? null);
     } catch (error) {
+      console.error("Auth check failed:", error);
       localStorage.removeItem("token");
       setUser(null);
     } finally {

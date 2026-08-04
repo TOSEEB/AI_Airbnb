@@ -7,12 +7,22 @@ const isPlaceholderUrl = (value) => {
 const getBaseURL = () => {
   const configuredUrl = import.meta.env.VITE_API_URL?.trim();
 
-  if (configuredUrl && !isPlaceholderUrl(configuredUrl)) {
-    return configuredUrl;
+  if (import.meta.env.PROD) {
+    if (configuredUrl && !isPlaceholderUrl(configuredUrl)) {
+      const normalized = configuredUrl.replace(/\/+$/, "");
+
+      if (normalized.includes("localhost") || normalized.includes("127.0.0.1")) {
+        return "/api";
+      }
+
+      return normalized;
+    }
+
+    return "/api";
   }
 
-  if (import.meta.env.PROD) {
-    return `${window.location.origin}/api`;
+  if (configuredUrl && !isPlaceholderUrl(configuredUrl)) {
+    return configuredUrl.replace(/\/+$/, "");
   }
 
   return "http://localhost:5000/api";
@@ -21,6 +31,8 @@ const getBaseURL = () => {
 const api = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
+  timeout: 10000,
+  timeoutErrorMessage: "The request took too long. Please try again.",
   headers: {
     "Content-Type": "application/json",
   },

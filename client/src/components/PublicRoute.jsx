@@ -1,9 +1,10 @@
 import { Navigate } from "react-router-dom";
 
 function PublicRoute({ children }) {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
-  if (user) {
+  if (token && user) {
     return <Navigate to="/" replace />;
   }
 
@@ -11,3 +12,4 @@ function PublicRoute({ children }) {
 }
 
 export default PublicRoute;
+

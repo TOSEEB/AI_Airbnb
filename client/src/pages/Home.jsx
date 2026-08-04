@@ -116,13 +116,15 @@ if (category !== "All") {
     try {
       const res = await getAllStays();
 
-      setStays(res.data);
-      setFilteredStays(res.data);
+      const staysData = Array.isArray(res?.data) ? res.data : [];
+
+      setStays(staysData);
+      setFilteredStays(staysData);
       setError("");
     } catch (err) {
       console.error(err);
       setError(
-        "Unable to load stays. Please check VITE_API_URL or backend deployment."
+        "Unable to load stays. Please check the backend connection or deployment."
       );
     } finally {
       setLoading(false);
