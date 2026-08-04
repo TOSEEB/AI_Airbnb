@@ -9,9 +9,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({
-    status: "ok"
-  });
+  console.log("HEALTH ROUTE HIT");
+
+  res.status(200).send("health working");
 });
 
 module.exports = app;
