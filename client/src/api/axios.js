@@ -1,8 +1,14 @@
 import axios from "axios";
 
+const isPlaceholderUrl = (value) => {
+  return !value || value.includes("your-backend-url") || value.includes("YOUR_BACKEND_URL");
+};
+
 const getBaseURL = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  const configuredUrl = import.meta.env.VITE_API_URL?.trim();
+
+  if (configuredUrl && !isPlaceholderUrl(configuredUrl)) {
+    return configuredUrl;
   }
 
   if (import.meta.env.PROD) {

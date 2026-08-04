@@ -6,7 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
-  console.log("USER:", user);
+  const hasSession = Boolean(user || localStorage.getItem("token"));
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -62,7 +62,7 @@ const Navbar = () => {
             Home
           </NavLink>
 
-          {user && (
+          {hasSession && (
             <>
               <NavLink to="/bookings" className={activeLink}>
                 Bookings
@@ -82,7 +82,7 @@ const Navbar = () => {
         {/* Right side */}
 
         <div className="flex items-center gap-5">
-          {user && (
+          {hasSession && (
             <Link to="/favorites">
               <FaHeart size={22} className="text-gray-600 hover:text-red-500" />
             </Link>

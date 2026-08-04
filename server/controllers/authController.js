@@ -196,6 +196,19 @@ const login = async (req, res) => {
 
 
 // ======================
+// LOGOUT
+// ======================
+
+const logout = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+  });
+
+  res.json({ message: "Logged out successfully" });
+};
+
+// ======================
 // GET CURRENT USER
 // ======================
 

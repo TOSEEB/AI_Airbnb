@@ -11,9 +11,9 @@ export const AuthProvider = ({ children }) => {
   const loadUser = async () => {
     try {
       const res = await authApi.getProfile();
-
-      setUser(res.data.user);
+      setUser(res.data?.user ?? null);
     } catch (error) {
+      localStorage.removeItem("token");
       setUser(null);
     } finally {
       setLoading(false);

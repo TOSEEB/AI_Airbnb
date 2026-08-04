@@ -10,9 +10,14 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
+
+    setLoading(true);
 
     try {
       const response = await register({
@@ -32,12 +37,12 @@ const Register = () => {
           },
         });
       }, 1200);
-
     } catch (err) {
       toast.error(
-        err.response?.data?.message ||
-          "Registration failed"
+        err.response?.data?.message || "Registration failed"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,9 +84,17 @@ const Register = () => {
 
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white w-full py-3 rounded transition"
+          disabled={loading}
+          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed text-white w-full py-3 rounded transition flex items-center justify-center gap-2"
         >
-          Create Account
+          {loading ? (
+            <>
+              <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Sending OTP...
+            </>
+          ) : (
+            "Create Account"
+          )}
         </button>
       </form>
     </div>

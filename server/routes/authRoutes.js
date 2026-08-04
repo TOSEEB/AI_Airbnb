@@ -5,8 +5,9 @@ const router = express.Router();
 const {
   signup,
   login,
+  logout,
   getMe,
- verifyOTP,
+  verifyOTP,
   resendOTP,
   forgotPassword,
   resetPassword,
@@ -30,5 +31,6 @@ router.post("/reset-password/:token", resetPassword);
 
 // Protected Route
 router.get("/me", authMiddleware, getMe);
+router.post("/logout", logout);
 
 module.exports = router;
