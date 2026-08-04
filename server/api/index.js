@@ -1,9 +1,26 @@
-const serverless = require("serverless-http");
+console.log("VERCEL ENTRY START");
+
+
 const app = require("../app");
 
-const handler = serverless(app);
+const { connectDatabase } = require("../db");
 
-module.exports = async (req, res) => {
-  console.log("FUNCTION START");
-  return handler(req, res);
-};
+
+// Connect MongoDB
+
+connectDatabase()
+  .then(() => {
+    console.log("DATABASE CONNECTED");
+  })
+  .catch((error) => {
+
+    console.log(
+      "DATABASE CONNECTION ERROR:",
+      error.message
+    );
+
+  });
+
+
+
+module.exports = app;
