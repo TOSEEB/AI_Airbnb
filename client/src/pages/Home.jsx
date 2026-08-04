@@ -26,7 +26,7 @@ const Home = () => {
 
     let data = [...stays];
 
-    // Smart Fuzzy Search
+    // Search
     if (search.trim()) {
       const fuse = new Fuse(stays, {
         keys: [
@@ -41,148 +41,183 @@ const Home = () => {
         minMatchCharLength: 2,
       });
 
-      const results = fuse.search(search);
-
-      data = results.map((result) => result.item);
+      data = fuse.search(search).map((result) => result.item);
     }
 
-    // Category Filter
-    // Category Filter
+    // Category filter
+    if (category !== "All") {
+      const categoryMap = {
+        Featured: [
+          "Villa",
+          "Penthouse",
+          "Beach House",
+        ],
 
-if (category !== "All") {
+        Beach: [
+          "Beach House",
+        ],
 
-  const categoryMap = {
+        Cabin: [
+          "Cabin",
+        ],
 
-    Featured: [
-      "Villa",
-      "Penthouse",
-      "Beach House",
-    ],
+        Luxury: [
+          "Villa",
+          "Penthouse",
+          "Castle",
+        ],
 
-    Beach: [
-      "Beach House",
-    ],
+        Cozy: [
+          "Cabin",
+          "Farm House",
+          "Bungalow",
+        ],
 
-    Cabin: [
-      "Cabin",
-    ],
+        City: [
+          "Apartment",
+          "Penthouse",
+        ],
 
-    Luxury: [
-      "Villa",
-      "Penthouse",
-      "Castle",
-    ],
+        Family: [
+          "Villa",
+          "Apartment",
+          "Bungalow",
+        ],
+      };
 
-    Cozy: [
-      "Cabin",
-      "Farm House",
-      "Bungalow",
-    ],
+      const allowedCategories = categoryMap[category];
 
-    City: [
-      "Apartment",
-      "Penthouse",
-    ],
-
-    Family: [
-      "Villa",
-      "Apartment",
-      "Bungalow",
-    ],
-
-  };
-
-
-  const allowedCategories =
-    categoryMap[category];
-
-
-  if (allowedCategories) {
-
-    data = data.filter((stay) =>
-      allowedCategories.includes(
-        stay.category
-      )
-    );
-
-  }
-
-}
+      if (allowedCategories) {
+        data = data.filter((stay) =>
+          allowedCategories.includes(stay.category)
+        );
+      }
+    }
 
     setFilteredStays(data);
+
   }, [search, category, stays]);
 
+
   const fetchStays = async () => {
+
     try {
+
+      console.log(
+        "VITE API URL:",
+        import.meta.env.VITE_API_URL
+      );
+
       const res = await getAllStays();
 
-      const staysData = Array.isArray(res?.data) ? res.data : [];
+      console.log(
+        "Backend response:",
+        res
+      );
+
+
+      const staysData =
+        Array.isArray(res?.data)
+          ? res.data
+          : [];
+
 
       setStays(staysData);
       setFilteredStays(staysData);
       setError("");
+
     } catch (err) {
-      console.error(err);
-      setError(
-        "Unable to load stays. Please check the backend connection or deployment."
+
+      console.error(
+        "FETCH STAYS ERROR:",
+        err.response || err.message || err
       );
+
+
+      setError(
+        "Unable to load stays. Backend connection failed."
+      );
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
+
   return (
     <div>
-      {/* Hero Section */}
+
       <Hero
         search={search}
         setSearch={setSearch}
         stays={stays}
       />
 
-      {/* Stays Section */}
+
       <div
         id="stays-section"
         className="container mx-auto px-6 py-10"
       >
+
         <FilterBar
           selected={category}
           onSelect={setCategory}
         />
 
+
         {loading ? (
+
           <Loader />
+
         ) : error ? (
+
           <div className="mt-12 text-center text-red-600">
+
             <h2 className="text-2xl font-semibold">
               {error}
             </h2>
+
             <p className="text-gray-500 mt-2">
-              If this page is deployed separately from your backend, set
-              `VITE_API_URL` in Vercel to your backend URL.
+              Check browser console for API URL and backend response.
             </p>
+
           </div>
+
         ) : filteredStays.length > 0 ? (
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+
             {filteredStays.map((stay) => (
+
               <StayCard
                 key={stay._id}
                 stay={stay}
               />
+
             ))}
+
           </div>
+
         ) : (
+
           <div className="mt-12 text-center">
+
             <h2 className="text-2xl font-semibold text-gray-700">
               No stays found
             </h2>
 
             <p className="text-gray-500 mt-2">
-              Try searching for another city or category.
+              Try searching another city or category.
             </p>
+
           </div>
+
         )}
+
       </div>
+
     </div>
   );
 };
