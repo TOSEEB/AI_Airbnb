@@ -1,17 +1,17 @@
+const serverless = require("serverless-http");
 const app = require("../app");
 const { connectDatabase } = require("../config/db");
 
+const handler = serverless(app);
+
 module.exports = async (req, res) => {
   try {
-    console.log("Connecting DB...");
     await connectDatabase();
-    console.log("DB Connected");
+    return handler(req, res);
   } catch (err) {
-    console.error("DB Error:", err);
+    console.error(err);
     return res.status(500).json({
       error: err.message,
     });
   }
-
-  return app(req, res);
 };
