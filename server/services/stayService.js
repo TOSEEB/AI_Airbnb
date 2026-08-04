@@ -5,14 +5,20 @@ const StayModel = require("../models/Stay");
 // ======================
 
 const getAllStays = async (filters = {}) => {
+  console.log("4. Service entered");
+
   const search = filters.search || "";
   const category = filters.category || "";
   const minPrice = Number(filters.minPrice || 0);
   const maxPrice = Number(filters.maxPrice || Number.MAX_SAFE_INTEGER);
 
+  console.log("5. Before StayModel.find()");
+
   const stays = await StayModel.find().lean();
 
-  return stays.filter((stay) => {
+  console.log("6. After StayModel.find()", stays.length);
+
+  const filtered = stays.filter((stay) => {
     const locationMatch =
       !search ||
       `${stay.title} ${stay.location}`
@@ -32,6 +38,10 @@ const getAllStays = async (filters = {}) => {
       price <= maxPrice
     );
   });
+
+  console.log("7. Returning filtered stays", filtered.length);
+
+  return filtered;
 };
 
 // ======================

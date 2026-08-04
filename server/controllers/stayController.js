@@ -14,22 +14,23 @@ const {
 // ======================
 
 const getStays = async (req, res) => {
+  console.log("1. Controller entered");
 
   try {
+    console.log("2. Before getAllStays");
 
     const stays = await getAllStays(req.query);
 
-    res.json(stays);
+    console.log("3. After getAllStays", stays.length);
 
-
+    return res.status(200).json(stays);
   } catch (err) {
+    console.error("Controller Error:", err);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: err.message,
     });
-
   }
-
 };
 
 
