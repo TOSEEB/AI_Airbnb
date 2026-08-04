@@ -1,9 +1,14 @@
-const serverless = require("serverless-http");
+console.log("BEFORE APP REQUIRE");
+
 const app = require("../app");
 
-const handler = serverless(app);
+console.log("AFTER APP REQUIRE");
 
-module.exports = async (req, res) => {
-  console.log("FUNCTION START");
-  return handler(req, res);
+module.exports = (req, res) => {
+  console.log("HANDLER HIT");
+
+  res.status(200).json({
+    ok: true,
+    message: "working"
+  });
 };
