@@ -24,17 +24,21 @@ const connectDatabase = async () => {
   try {
     console.log("Connecting to MongoDB...");
 
-    const connection = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 10000,
-      connectTimeoutMS: 10000,
-      socketTimeoutMS: 10000,
+    const connectionPromise = mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+      socketTimeoutMS: 5000,
+      family: 4,
+      bufferCommands: false,
     });
 
-    cachedConnection = connection;
+    cachedConnection = connectionPromise;
+
+    const connection = await connectionPromise;
 
     console.log("MongoDB connected successfully");
 
-    return cachedConnection;
+    return connection;
 
   } catch (error) {
     cachedConnection = null;
