@@ -1,11 +1,14 @@
-console.log("BEFORE APP REQUIRE");
+console.log("VERCEL ENTRY");
 
 const app = require("../app");
+const { connectDatabase } = require("../db");
 
-console.log("AFTER APP REQUIRE");
+connectDatabase()
+  .then(() => {
+    console.log("DB READY");
+  })
+  .catch((err) => {
+    console.log("DB ERROR", err.message);
+  });
 
-module.exports = (req, res) => {
-  console.log("HANDLER HIT");
-
-  app(req, res);
-};
+module.exports = app;
