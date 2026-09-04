@@ -25,15 +25,9 @@ const ResetPassword = () => {
     try {
       setLoading(true);
 
-      console.log("========== RESET PASSWORD ==========");
-      console.log("Token:", token);
-      console.log("Password:", password);
-
       const res = await api.post(`/auth/reset-password/${token}`, {
         password,
       });
-
-      console.log("Response:", res.data);
 
       toast.success(
         res.data.message || "Password reset successful!"
@@ -44,9 +38,6 @@ const ResetPassword = () => {
       }, 1500);
 
     } catch (error) {
-      console.log("========== ERROR ==========");
-      console.log(error);
-
       toast.error(
         error.response?.data?.message ||
           error.message ||

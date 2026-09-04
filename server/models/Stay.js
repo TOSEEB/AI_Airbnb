@@ -60,6 +60,11 @@ const staySchema = new mongoose.Schema(
     // AI Generated Travel Recommendation Cache
     aiRecommendation: {
 
+      summary: {
+        type: String,
+        default: "",
+      },
+
       attractions: {
         type: [String],
         default: [],
@@ -80,6 +85,37 @@ const staySchema = new mongoose.Schema(
         default: [],
       },
 
+      source: {
+        type: String,
+        default: "",
+      },
+
+      area: {
+        type: String,
+        default: "",
+      },
+
+    },
+
+    geo: {
+      lat: Number,
+      lng: Number,
+    },
+
+    nearbyPlaces: {
+      attractions: {
+        type: [String],
+        default: [],
+      },
+      food: {
+        type: [String],
+        default: [],
+      },
+      activities: {
+        type: [String],
+        default: [],
+      },
+      fetchedAt: Date,
     },
 
 

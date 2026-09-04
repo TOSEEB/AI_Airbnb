@@ -1,18 +1,21 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
 
 import {
-  createBooking,
   createPaymentOrder,
   verifyPayment,
 } from "../../api/bookingApi";
 
 
 const ReservationCard = ({ stay, id }) => {
+  const { user } = useAuth();
+  const [params] = useSearchParams();
 
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(1);
+  const [checkIn, setCheckIn] = useState(params.get("checkIn") || "");
+  const [checkOut, setCheckOut] = useState(params.get("checkOut") || "");
+  const [guests, setGuests] = useState(Number(params.get("guests")) || 1);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [tripSummary, setTripSummary] = useState(null);
 
@@ -37,6 +40,10 @@ const ReservationCard = ({ stay, id }) => {
       );
     }
 
+    if (!user && !localStorage.getItem("token")) {
+      return toast.error("Please login to reserve.");
+    }
+
     try {
 
       setBookingLoading(true);
@@ -51,6 +58,8 @@ const ReservationCard = ({ stay, id }) => {
       const { order, tripSummary } = orderRes.data;
 
       setTripSummary(tripSummary);
+
+      toast.info("Dates are held for 20 minutes while you complete payment.");
 
 
       const options = {
@@ -71,17 +80,14 @@ const ReservationCard = ({ stay, id }) => {
 
           try {
 
-            await verifyPayment(response);
+            const verified = await verifyPayment(response);
 
-            await createBooking({
-              stayId: id,
-              checkIn,
-              checkOut,
-              guests,
-            });
+            if (!verified.data?.success) {
+              throw new Error("Payment verification failed.");
+            }
 
             toast.success(
-              "Booking Confirmed!"
+              "Payment verified and booking confirmed!"
             );
 
             setCheckIn("");
@@ -128,12 +134,16 @@ const ReservationCard = ({ stay, id }) => {
 
 
     } catch(err) {
-
-      console.log(err);
+      const apiMessage = err.response?.data?.message;
+      const needsLogin =
+        err.response?.status === 401 ||
+        apiMessage === "No token provided" ||
+        apiMessage === "Invalid token";
 
       toast.error(
-        err.response?.data?.message ||
-        "Unable to start payment."
+        needsLogin
+          ? "Please login to reserve."
+          : apiMessage || "Unable to start payment."
       );
 
     } finally {
@@ -257,7 +267,7 @@ const ReservationCard = ({ stay, id }) => {
       <button
         onClick={bookStay}
         disabled={bookingLoading}
-        className="w-full mt-6 bg-rose-500 text-white py-4 rounded-xl font-semibold hover:bg_rose-600 transition disabled:opacity-50"
+        className="w-full mt-6 bg-rose-500 text-white py-4 rounded-xl font-semibold hover:bg-rose-600 transition disabled:opacity-50"
       >
 
         {

@@ -2,15 +2,13 @@ import api from "./axios";
 
 // AI Stay Assistant
 export const getAIRecommendation = (data) => {
-  return api.post("/ai/recommendation", data);
+  return api.post("/ai/recommendation", data, { timeout: 60000 });
 };
 
-// AI Planner
 export const getPlannerRecommendation = (data) => {
-  return api.post("/ai/planner", data);
+  return api.post("/ai/planner", data, { timeout: 60000 });
 };
 
-// AI Chat
 export const sendChatMessage = (data) => {
-  return api.post("/ai/chat", data);
+  return api.post("/ai/chat", data, { timeout: 60000 });
 };

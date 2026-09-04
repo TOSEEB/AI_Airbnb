@@ -28,6 +28,10 @@ const AIStayAssistant = ({ stay }) => {
 
         toast.error(err.response.data.message);
 
+      } else if (err.code === "ECONNABORTED") {
+
+        toast.error("AI is still generating. Please try again in a moment.");
+
       } else {
 
         toast.error("Unable to generate AI recommendations.");
@@ -67,7 +71,9 @@ const AIStayAssistant = ({ stay }) => {
       {!recommendation && !loading && (
 
         <p className="text-gray-500 mt-5">
-          Get AI-powered travel suggestions for this stay.
+          Get an AI travel plan for this listing’s area (for example Manali),
+          not a GPS pin. Exact map coordinates can be added later for real
+          addresses.
         </p>
 
       )}
@@ -87,6 +93,14 @@ const AIStayAssistant = ({ stay }) => {
             <p className="text-gray-700 leading-7">
               {recommendation.summary}
             </p>
+            {recommendation.source === "area-ai" && (
+              <p className="text-sm text-gray-500 mt-3">
+                Plan is for this listing’s area
+                {recommendation.area ? ` (${recommendation.area})` : ""},
+                generated with AI. Exact lat/long nearby search can be added
+                later for real addresses.
+              </p>
+            )}
 
           </div>
 

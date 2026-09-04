@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const BookingCard = ({ booking }) => {
+const BookingCard = ({ booking, onCancel }) => {
   if (!booking) return null;
 
   const stay = booking.stay || {};
@@ -47,21 +47,47 @@ const BookingCard = ({ booking }) => {
 
           <p>
             <strong>Status:</strong>{" "}
-            <span className="text-green-600 capitalize">
+            <span
+              className={`capitalize ${
+                booking.status === "confirmed"
+                  ? "text-green-600"
+                  : booking.status === "pending"
+                    ? "text-amber-600"
+                    : "text-gray-600"
+              }`}
+            >
               {booking.status}
             </span>
           </p>
+
+          {booking.status === "pending" && booking.holdExpiresAt && (
+            <p className="text-sm text-amber-700">
+              Complete payment by{" "}
+              {new Date(booking.holdExpiresAt).toLocaleTimeString()} to keep
+              these dates.
+            </p>
+          )}
         </div>
 
         <Link
-          to={`/stay/${stay._id}`}
+          to={stay._id ? `/stay/${stay._id}` : "/stays"}
           className="block mt-6 text-center bg-rose-500 hover:bg-rose-600 text-white py-3 rounded-xl transition"
         >
           View Stay
         </Link>
+
+        {booking.status === "pending" && onCancel && (
+          <button
+            type="button"
+            onClick={() => onCancel(booking._id)}
+            className="block w-full mt-3 text-center border border-gray-300 py-3 rounded-xl hover:bg-gray-50"
+          >
+            Release hold
+          </button>
+        )}
       </div>
     </div>
   );
 };
 
-export default BookingCard; 
+export default BookingCard;

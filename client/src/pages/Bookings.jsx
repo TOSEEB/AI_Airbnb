@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import BookingCard from "../components/BookingCard";
 import Loader from "../components/Loader";
 
-import { getBookings } from "../api/bookingApi";
+import { cancelBooking, getBookings } from "../api/bookingApi";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -16,11 +17,21 @@ const Bookings = () => {
   const fetchBookings = async () => {
     try {
       const res = await getBookings();
-      setBookings(res.data);
+      setBookings(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.log(err);
+      toast.error("Unable to load bookings");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancel = async (bookingId) => {
+    try {
+      await cancelBooking(bookingId);
+      toast.success("Hold released");
+      fetchBookings();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Could not cancel hold");
     }
   };
 
@@ -28,27 +39,23 @@ const Bookings = () => {
 
   return (
     <div className="container mx-auto py-10 px-6">
+      <h1 className="text-4xl font-bold mb-8">My Bookings</h1>
 
-      <h1 className="text-4xl font-bold mb-8">
-
-        My Bookings
-
-      </h1>
-
-      <div className="grid md:grid-cols-2 gap-8">
-
-        {bookings.map((booking) => (
-          <BookingCard
-            key={booking._id}
-            booking={booking}
-          />
-        ))}
-
-      </div>
-
+      {bookings.length === 0 ? (
+        <p className="text-gray-500">You have no bookings yet.</p>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-8">
+          {bookings.map((booking) => (
+            <BookingCard
+              key={booking._id}
+              booking={booking}
+              onCancel={handleCancel}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default Bookings; 
-
+export default Bookings;

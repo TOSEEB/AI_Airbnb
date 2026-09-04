@@ -1,186 +1,86 @@
 import { useEffect, useState } from "react";
-import Fuse from "fuse.js";
+import { useSearchParams } from "react-router-dom";
 
 import Hero from "../components/Hero";
-import FilterBar from "../components/FilterBar";
+import FilterBar from "../components/FilterBar"; 
 import StayCard from "../components/StayCard";
 import StayCardSkeleton from "../components/StayCardSkeleton";
 
 import { getAllStays } from "../api/stayApi";
 
 const Home = () => {
+  const [params] = useSearchParams();
   const [stays, setStays] = useState([]);
   const [filteredStays, setFilteredStays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
+  const location = params.get("location") || "";
+  const checkIn = params.get("checkIn") || "";
+  const checkOut = params.get("checkOut") || "";
+  const guests = params.get("guests") || "";
 
   useEffect(() => {
     fetchStays();
-  }, []);
-
+  }, [location, checkIn, checkOut, guests]);
 
   useEffect(() => {
-
-    if (!stays.length) return;
+    if (!stays.length) {
+      setFilteredStays([]);
+      return;
+    }
 
     let data = [...stays];
 
-
-    // Search
-    if (search.trim()) {
-
-      const fuse = new Fuse(stays, {
-
-        keys: [
-          "title",
-          "location",
-          "description",
-          "category",
-          "type",
-        ],
-
-        threshold: 0.4,
-        ignoreLocation: true,
-        minMatchCharLength: 2,
-
-      });
-
-
-      data = fuse
-        .search(search)
-        .map((result) => result.item);
-
-    }
-
-
-
-    // Category filter
-
     if (category !== "All") {
-
       const categoryMap = {
-
-        Featured: [
-          "Villa",
-          "Penthouse",
-          "Beach House",
-        ],
-
-        Beach: [
-          "Beach House",
-        ],
-
-        Cabin: [
-          "Cabin",
-        ],
-
-        Luxury: [
-          "Villa",
-          "Penthouse",
-          "Castle",
-        ],
-
-        Cozy: [
-          "Cabin",
-          "Farm House",
-          "Bungalow",
-        ],
-
-        City: [
-          "Apartment",
-          "Penthouse",
-        ],
-
-        Family: [
-          "Villa",
-          "Apartment",
-          "Bungalow",
-        ],
-
+        Featured: ["Villa", "Penthouse", "Beach House"],
+        Beach: ["Beach House"],
+        Cabin: ["Cabin"],
+        Luxury: ["Villa", "Penthouse", "Castle"],
+        Cozy: ["Cabin", "Farm House", "Bungalow"],
+        City: ["Apartment", "Penthouse"],
+        Family: ["Villa", "Apartment", "Bungalow"],
       };
 
-
-      const allowedCategories =
-        categoryMap[category];
-
+      const allowedCategories = categoryMap[category];
 
       if (allowedCategories) {
-
         data = data.filter((stay) =>
           allowedCategories.includes(stay.category)
         );
-
       }
-
     }
-
 
     setFilteredStays(data);
-
-
-  }, [search, category, stays]);
-
-
+  }, [category, stays]);
 
   const fetchStays = async () => {
-
     try {
+      setLoading(true);
 
-      console.log(
-        "VITE API URL:",
-        import.meta.env.VITE_API_URL
-      );
+      const res = await getAllStays({
+        location,
+        checkIn,
+        checkOut,
+        guests,
+      });
 
-
-      const res = await getAllStays();
-
-
-      console.log(
-        "Backend response:",
-        res
-      );
-
-
-
-      const staysData =
-        Array.isArray(res?.data)
-          ? res.data
-          : [];
-
-
+      const staysData = Array.isArray(res?.data) ? res.data : [];
 
       setStays(staysData);
-
       setFilteredStays(staysData);
-
       setError("");
-
-
-
     } catch (err) {
-
-
-      console.error(
-        "FETCH STAYS ERROR:",
-        err.response || err.message || err
-      );
-
-
+      console.error("FETCH STAYS ERROR:", err.response?.data || err.message || err);
       setError(
-        "Unable to load stays. Backend connection failed."
+        err.response?.data?.message ||
+          "Unable to load stays. Backend connection failed."
       );
-
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
 
@@ -190,11 +90,7 @@ const Home = () => {
     <div>
 
 
-      <Hero
-        search={search}
-        setSearch={setSearch}
-        stays={stays}
-      />
+      <Hero />
 
 
 
@@ -300,7 +196,7 @@ const Home = () => {
 
             <p className="text-gray-500 mt-2">
 
-              Try searching another city or category.
+              Try another city, dates, or guest count.
 
             </p>
 

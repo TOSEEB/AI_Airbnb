@@ -13,9 +13,13 @@ export const AuthProvider = ({ children }) => {
       const res = await authApi.getProfile();
       setUser(res.data?.user ?? null);
     } catch (error) {
-      console.error("Auth check failed:", error);
-      localStorage.removeItem("token");
-      setUser(null);
+      const status = error.response?.status;
+      if (status === 401) {
+        localStorage.removeItem("token");
+        setUser(null);
+      } else {
+        console.error("Auth check failed:", error.response?.data || error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -56,7 +60,14 @@ export const AuthProvider = ({ children }) => {
     return res.data;
   };
 
-  // Logout
+  // Become host
+  const becomeHost = async () => {
+    const res = await authApi.becomeHost();
+    localStorage.setItem("token", res.data.token);
+    setUser(res.data.user);
+    return res.data;
+  };
+
   const logout = async () => {
     try {
       if (authApi.logout) {
@@ -81,6 +92,7 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         loadUser,
+        becomeHost,
       }}
     >
       {children}

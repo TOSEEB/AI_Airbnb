@@ -3,6 +3,7 @@ const Stay = require("../models/Stay");
 const {
   generateChatResponse,
 } = require("../services/chatService");
+const { consumeAiCredit } = require("../middleware/aiLimiter");
 
 const chatWithAI = async (req, res) => {
   try {
@@ -26,6 +27,8 @@ const chatWithAI = async (req, res) => {
       stay,
       message
     );
+
+    await consumeAiCredit(req.user.id);
 
     res.json({
       reply,

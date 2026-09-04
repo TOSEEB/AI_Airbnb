@@ -10,6 +10,7 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("guest");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -24,6 +25,7 @@ const Register = () => {
         name,
         email,
         password,
+        role,
       });
 
       console.log(response.data);
@@ -81,6 +83,15 @@ const Register = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+
+        <select
+          className="w-full border p-3 rounded"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="guest">I want to book stays</option>
+          <option value="host">I want to host stays</option>
+        </select>
 
         <button
           type="submit"

@@ -12,6 +12,10 @@ export const logout = () => {
   return api.post("/auth/logout");
 };
 
+export const becomeHost = () => {
+  return api.post("/auth/become-host");
+};
+
 export const getProfile = () => {
   return api.get("/auth/me");
 };

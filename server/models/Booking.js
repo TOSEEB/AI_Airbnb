@@ -36,7 +36,23 @@ const bookingSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      default: "confirmed",
+      enum: ["pending", "confirmed", "cancelled", "payment_failed"],
+      default: "pending",
+    },
+
+    razorpayOrderId: {
+      type: String,
+      default: null,
+    },
+
+    razorpayPaymentId: {
+      type: String,
+      default: null,
+    },
+
+    holdExpiresAt: {
+      type: Date,
+      default: null,
     },
   },
   {
@@ -44,4 +60,14 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Booking", bookingSchema);
+bookingSchema.index(
+  { razorpayPaymentId: 1 },
+  {
+    unique: true,
+    sparse: true,
+  }
+);
+
+bookingSchema.index({ stay: 1, status: 1, checkIn: 1, checkOut: 1 });
+
+module.exports = mongoose.model("Booking", bookingSchema); 

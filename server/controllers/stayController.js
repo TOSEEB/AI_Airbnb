@@ -5,6 +5,7 @@ const {
   getHostStays,
   updateStay,
   deleteStay,
+  getStayLocations,
 } = require("../services/stayService");
 
 
@@ -14,21 +15,21 @@ const {
 // ======================
 
 const getStays = async (req, res) => {
-  console.log("1. Controller entered");
-
   try {
-    console.log("2. Before getAllStays");
-
     const stays = await getAllStays(req.query);
-
-    console.log("3. After getAllStays", stays.length);
-
     return res.status(200).json(stays);
   } catch (err) {
     console.error("Controller Error:", err);
 
-    return res.status(500).json({
-      message: err.message,
+    const dbDown =
+      err.name === "MongoServerSelectionError" ||
+      err.name === "MongoNetworkError" ||
+      err.message?.includes("ENOTFOUND");
+
+    return res.status(dbDown ? 503 : 500).json({
+      message: dbDown
+        ? "Database is unavailable. Check MongoDB Atlas DNS and Network Access."
+        : err.message,
     });
   }
 };
@@ -262,22 +263,23 @@ const removeStay = async (req, res) => {
 };
 
 
-
-
-
+const listLocations = async (req, res) => {
+  try {
+    const locations = await getStayLocations();
+    return res.status(200).json({ locations });
+  } catch (err) {
+    return res.status(500).json({
+      message: err.message || "Failed to load locations",
+    });
+  }
+};
 
 module.exports = {
-
   getStays,
-
   addStay,
-
   getStay,
-
   getMyStays,
-
   editStay,
-
   removeStay,
-
+  listLocations,
 };

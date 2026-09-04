@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
 
 import { AuthProvider } from "./context/AuthContext";
-import { StayProvider } from "./context/StayContext";
+import { FavoriteProvider } from "./context/FavoriteContext";
 
 import "./styles.css";
 
@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <StayProvider>
+        <FavoriteProvider>
           <App />
 
           <ToastContainer
@@ -29,7 +29,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             draggable
             theme="light"
           />
-        </StayProvider>
+        </FavoriteProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

@@ -38,26 +38,14 @@ const getBaseURL = () => {
   }
 
 
-  // Development
-  if (configuredUrl && !isPlaceholderUrl(configuredUrl)) {
-    let normalized = configuredUrl.replace(/\/+$/, "");
-
-    if (!normalized.endsWith("/api")) {
-      normalized = `${normalized}/api`;
-    }
-
-    return normalized;
-  }
-
-
-  return "http://localhost:5000/api";
+  return "/api";
 };
 
 
 const api = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
-  timeout: 10000,
+  timeout: 60000,
 
   timeoutErrorMessage:
     "The request took too long. Please try again.",
@@ -67,21 +55,13 @@ const api = axios.create({
   },
 });
 
-
-// Automatically attach JWT token
 api.interceptors.request.use(
   (config) => {
-
     const token = localStorage.getItem("token");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    console.log(
-      "API Request:",
-      config.baseURL + config.url
-    );
 
     return config;
   },

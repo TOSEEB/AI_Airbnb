@@ -9,62 +9,38 @@ const client = process.env.AI_API_KEY
 
 
 
-const generateStayRecommendation = async (stay) => {
-
+const generateStayRecommendation = async (stay, areaContext = {}) => {
   try {
-
+    const area = areaContext.area || stay.location;
+    const wikiNote = areaContext.extract
+      ? `Background on this area (${areaContext.wikiTitle || area}):\n${areaContext.extract}`
+      : "No extra area article was found. Still recommend well-known places in this region.";
 
     const prompt = `
+You are a travel assistant in a vacation-rental app. This is an AI integration demo.
 
-You are an intelligent travel assistant for an Airbnb application.
+The guest is staying in this AREA / city / region (not a GPS pin):
+${area}
 
-A user is viewing the following Airbnb stay.
-
-Property Name: ${stay.title}
-
-Location: ${stay.location}
-
+Stay details (for tone and budget only):
+Name: ${stay.title}
 Description: ${stay.description || "No description available"}
-
 Price: ₹${stay.price}
-
 Rating: ${stay.rating}
 
+${wikiNote}
 
-Generate helpful travel recommendations for this stay.
+Write recommendations for the AREA above (example: if location is Manali, talk about Manali and nearby Himachal highlights).
+Use well-known public places and food styles for that region. Do not claim exact coordinates.
 
-
-Return ONLY valid JSON in exactly this format:
-
-
+Return ONLY valid JSON:
 {
-  "summary": "2-3 sentence personalized recommendation",
-
-  "attractions": [
-    "Attraction 1",
-    "Attraction 2",
-    "Attraction 3"
-  ],
-
-  "food": [
-    "Food Place 1",
-    "Food Place 2",
-    "Food Place 3"
-  ],
-
-  "activities": [
-    "Activity 1",
-    "Activity 2",
-    "Activity 3"
-  ],
-
-  "itinerary": [
-    "Day 1: Detailed itinerary",
-    "Day 2: Detailed itinerary",
-    "Day 3: Detailed itinerary"
-  ]
+  "summary": "2-3 sentences about staying here and the area",
+  "attractions": ["three well-known area attractions"],
+  "food": ["three well-known area food spots or local dishes/places"],
+  "activities": ["three area activities"],
+  "itinerary": ["Day 1: ...", "Day 2: ...", "Day 3: ..."]
 }
-
 `;
 
 
@@ -83,6 +59,7 @@ Return ONLY valid JSON in exactly this format:
           type: "json_object",
         },
 
+        max_tokens: 500,
 
         messages: [
           {
@@ -95,9 +72,11 @@ Return ONLY valid JSON in exactly this format:
 
 
 
-    return JSON.parse(
-      response.choices[0].message.content
-    );
+    return {
+      ...JSON.parse(response.choices[0].message.content),
+      source: "area-ai",
+      area,
+    };
 
 
 

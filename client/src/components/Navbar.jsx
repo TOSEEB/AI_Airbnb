@@ -1,11 +1,15 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { FaAirbnb, FaUserCircle, FaHeart, FaBars } from "react-icons/fa";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import SearchBar from "./SearchBar";
+import { locationToPath } from "../utils/authRedirect";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout } = useContext(AuthContext);
+  const location = useLocation();
+  const returnTo = locationToPath(location);
+  const { user, logout, becomeHost } = useContext(AuthContext);
   const hasSession = Boolean(user || localStorage.getItem("token"));
 
   const [showMenu, setShowMenu] = useState(false);
@@ -72,6 +76,18 @@ const Navbar = () => {
                 Dashboard
               </NavLink>
             </>
+          )}
+
+          {(user?.role === "host" || user?.role === "admin") && (
+            <NavLink to="/host/dashboard" className={activeLink}>
+              Host
+            </NavLink>
+          )}
+
+          {user?.role === "admin" && (
+            <NavLink to="/admin" className={activeLink}>
+              Admin
+            </NavLink>
           )}
 
           <NavLink to="/ai" className={activeLink}>
@@ -216,7 +232,7 @@ const Navbar = () => {
                     Dashboard
                   </Link>
 
-                  {user.role === "host" && (
+                  {(user.role === "host" || user.role === "admin") && (
                     <Link
                       to="/host/dashboard"
 
@@ -230,6 +246,41 @@ const Navbar = () => {
                             "
                     >
                       Host Dashboard
+                    </Link>
+                  )}
+
+                  {user.role === "guest" && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await becomeHost();
+                          closeMenu();
+                          navigate("/host/dashboard");
+                        } catch (err) {
+                          console.error(err);
+                        }
+                      }}
+                      className="block w-full text-left px-5 py-3 hover:bg-gray-100"
+                    >
+                      Become a host
+                    </button>
+                  )}
+
+                  {user.role === "admin" && (
+                    <Link
+                      to="/admin"
+
+                      onClick={closeMenu}
+
+                      className="
+                            block
+                            px-5
+                            py-3
+                            hover:bg-gray-100
+                            "
+                    >
+                      Admin Dashboard
                     </Link>
                   )}
 
@@ -253,12 +304,17 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              <Link to="/login" className="text-gray-700 hover:text-rose-500">
+              <Link
+                to="/login"
+                state={{ from: returnTo }}
+                className="text-gray-700 hover:text-rose-500"
+              >
                 Login
               </Link>
 
               <Link
                 to="/register"
+                state={{ from: returnTo }}
                 className="
                   bg-rose-500
                   text-white
@@ -273,6 +329,10 @@ const Navbar = () => {
             </>
           )}
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 pb-4">
+        <SearchBar />
       </div>
     </nav>
   );

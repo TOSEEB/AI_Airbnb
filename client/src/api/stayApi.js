@@ -5,8 +5,12 @@ import api from "./axios";
 // ======================
 
 // Get all stays
-export const getAllStays = () => {
-  return api.get("/stays");
+export const getAllStays = (params) => {
+  return api.get("/stays", { params });
+};
+
+export const getStayLocations = () => {
+  return api.get("/stays/locations");
 };
 
 // Get single stay

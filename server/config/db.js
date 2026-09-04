@@ -1,8 +1,5 @@
-const dns = require("dns");
+require("./dns");
 const mongoose = require("mongoose");
-
-
-dns.setDefaultResultOrder("ipv4first");
 
 
 let cachedConnection = null;

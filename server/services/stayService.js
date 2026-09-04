@@ -1,47 +1,37 @@
 const StayModel = require("../models/Stay");
-
-// ======================
-// GET ALL STAYS
-// ======================
+const { getUnavailableStayIds } = require("./occupancyService");
+const { escapeRegex, expandLocationTerms } = require("../utils/locationSearch");
 
 const getAllStays = async (filters = {}) => {
-  console.log("4. Service entered");
-
-  const search = filters.search || "";
+  const search = filters.location || filters.search || "";
   const category = filters.category || "";
-  const minPrice = Number(filters.minPrice || 0);
-  const maxPrice = Number(filters.maxPrice || Number.MAX_SAFE_INTEGER);
+  const guests = Number(filters.guests || 0);
+  const checkIn = filters.checkIn;
+  const checkOut = filters.checkOut;
 
-  console.log("5. Before StayModel.find()");
+  const query = {};
 
-  const stays = await StayModel.find().lean();
+  if (search) {
+    query.$or = expandLocationTerms(search).flatMap((term) => [
+      { location: { $regex: escapeRegex(term), $options: "i" } },
+      { title: { $regex: escapeRegex(term), $options: "i" } },
+    ]);
+  }
 
-  console.log("6. After StayModel.find()", stays.length);
+  if (category) {
+    query.category = new RegExp(`^${category}$`, "i");
+  }
 
-  const filtered = stays.filter((stay) => {
-    const locationMatch =
-      !search ||
-      `${stay.title} ${stay.location}`
-        .toLowerCase()
-        .includes(search.toLowerCase());
+  if (guests > 0) {
+    query.guests = { $gte: guests };
+  }
 
-    const categoryMatch =
-      !category ||
-      stay.category?.toLowerCase() === category.toLowerCase();
+  if (checkIn && checkOut) {
+    const bookedStayIds = await getUnavailableStayIds(checkIn, checkOut);
+    query._id = { $nin: bookedStayIds };
+  }
 
-    const price = Number(stay.price || 0);
-
-    return (
-      locationMatch &&
-      categoryMatch &&
-      price >= minPrice &&
-      price <= maxPrice
-    );
-  });
-
-  console.log("7. Returning filtered stays", filtered.length);
-
-  return filtered;
+  return StayModel.find(query).lean();
 };
 
 // ======================
@@ -109,6 +99,11 @@ const deleteStay = async (
   });
 };
 
+const getStayLocations = async () => {
+  const locations = await StayModel.distinct("location");
+  return locations.filter(Boolean).sort((a, b) => a.localeCompare(b));
+};
+
 module.exports = {
   getAllStays,
   createStay,
@@ -116,4 +111,5 @@ module.exports = {
   getHostStays,
   updateStay,
   deleteStay,
+  getStayLocations,
 };

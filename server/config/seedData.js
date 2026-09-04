@@ -1,4 +1,6 @@
 const StayModel = require("../models/Stay");
+const UserModel = require("../models/User");
+const { createUser } = require("../services/authService");
 
 
 
@@ -544,6 +546,33 @@ const initialStays = [
 ];
 
 
+const seedAdmin = async () => {
+  const email = (process.env.ADMIN_EMAIL || "admin@ai-airbnb.local").toLowerCase();
+  const password = process.env.ADMIN_PASSWORD || "Admin12345";
+
+  const existing = await UserModel.findOne({ email });
+
+  if (existing) {
+    if (existing.role !== "admin") {
+      existing.role = "admin";
+      existing.isVerified = true;
+      await existing.save();
+      console.log("Existing user promoted to admin:", email);
+    }
+    return;
+  }
+
+  await createUser({
+    name: "Admin",
+    email,
+    password,
+    role: "admin",
+    isVerified: true,
+  });
+
+  console.log("Admin seeded:", email);
+};
+
 const seedStays = async () => {
   const count = await StayModel.countDocuments();
 
@@ -556,4 +585,4 @@ const seedStays = async () => {
   console.log("Stays seeded");
 };
 
-module.exports = { seedStays };
+module.exports = { seedStays, seedAdmin };

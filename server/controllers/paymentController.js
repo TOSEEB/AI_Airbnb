@@ -3,14 +3,8 @@ const {
   verifyRazorpayPayment,
 } = require("../services/paymentService");
 
-
-// ==========================
-// Create Razorpay Order
-// ==========================
-
 const createOrder = async (req, res) => {
   try {
-
     const {
       stayId,
       checkIn,
@@ -18,145 +12,90 @@ const createOrder = async (req, res) => {
       guests,
     } = req.body;
 
-
     const data = await createRazorpayOrder(
       stayId,
       checkIn,
       checkOut,
-      guests
+      guests,
+      req.user.id
     );
-
 
     res.status(200).json({
       order: data.order,
       tripSummary: data.tripSummary,
+      bookingId: data.bookingId,
+      holdExpiresAt: data.holdExpiresAt,
     });
-
-
   } catch (err) {
-
     console.error("Create Order Error:", err.message);
 
-
-
     if (err.message === "Stay not found") {
-
       return res.status(404).json({
         message: err.message,
       });
-
     }
-
-
-
-    if (err.message === "Invalid booking dates") {
-
-      return res.status(400).json({
-        message: err.message,
-      });
-
-    }
-
-
-
-    // ==========================
-    // Booking Availability Error
-    // ==========================
 
     if (
-      err.message ===
-      "This stay is already booked for selected dates"
+      err.message === "Invalid booking dates" ||
+      err.message === "This stay is already booked for selected dates" ||
+      err.message === "User is required"
     ) {
-
       return res.status(400).json({
         message: err.message,
       });
-
     }
 
-
-
-    // Other errors
-
     return res.status(500).json({
-
       message:
         err.message ||
         "Failed to create Razorpay order",
-
     });
-
-
   }
 };
-
-
-
-// ==========================
-// Verify Payment
-// ==========================
 
 const verifyPayment = async (req, res) => {
-
   try {
+    const result = await verifyRazorpayPayment(req.body, req.user.id);
 
-
-    const isValid =
-      verifyRazorpayPayment(req.body);
-
-
-
-    if (!isValid) {
-
+    if (!result.success) {
       return res.status(400).json({
-
         success: false,
-
-        message:
-          "Payment verification failed",
-
+        message: "Payment verification failed",
       });
-
     }
 
-
-
     return res.status(200).json({
-
       success: true,
-
-      message:
-        "Payment verified successfully",
-
+      message: "Payment verified and booking confirmed",
+      booking: result.booking,
     });
-
-
-
   } catch (err) {
+    console.error("Payment Verification Error:", err.message);
 
+    if (err.message === "Booking not found for this payment") {
+      return res.status(404).json({
+        success: false,
+        message: err.message,
+      });
+    }
 
-    console.error(
-      "Payment Verification Error:",
-      err.message
-    );
-
+    if (
+      err.message === "This stay is already booked for selected dates" ||
+      err.message === "Payment already used" ||
+      err.message === "Payment hold expired. Please book again."
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
 
     return res.status(500).json({
-
       success: false,
-
-      message:
-        err.message ||
-        "Verification failed",
-
+      message: err.message || "Verification failed",
     });
-
-
   }
-
 };
-
-
 
 module.exports = {
   createOrder,

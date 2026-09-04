@@ -21,6 +21,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 
 const errorHandler = require("./middleware/errorHandler");
+const requireDatabase = require("./middleware/requireDatabase");
 
 const app = express();
 
@@ -32,6 +33,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
+  "http://192.168.154.25:5173",
 
   // Frontend Vercel
   "https://ai-airbnb-sand.vercel.app",
@@ -90,7 +92,7 @@ app.use(
 
 app.use(cookieParser());
 
-
+app.use("/api", requireDatabase);
 
 // =======================
 // API ROUTES

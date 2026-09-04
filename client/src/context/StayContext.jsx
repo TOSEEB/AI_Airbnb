@@ -11,9 +11,8 @@ export const StayProvider = ({ children }) => {
     try {
       setLoading(true);
 
-      const data = await stayApi.getAllStays();
-
-      setStays(data);
+      const res = await stayApi.getAllStays();
+      setStays(Array.isArray(res?.data) ? res.data : []);
     } catch (error) {
       console.error(error);
     } finally {

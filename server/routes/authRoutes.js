@@ -11,6 +11,7 @@ const {
   resendOTP,
   forgotPassword,
   resetPassword,
+  becomeHost,
 } = require("../controllers/authController");
 
 const authMiddleware = require("../middleware/auth");
@@ -31,6 +32,7 @@ router.post("/reset-password/:token", resetPassword);
 
 // Protected Route
 router.get("/me", authMiddleware, getMe);
+router.post("/become-host", authMiddleware, becomeHost);
 router.post("/logout", logout);
 
 module.exports = router;

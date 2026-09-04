@@ -3,6 +3,8 @@ const Stay = require("../models/Stay");
 const {
   generateStayRecommendation,
 } = require("../services/aiService");
+const { getAreaContext } = require("../services/placesService");
+const { consumeAiCredit } = require("../middleware/aiLimiter");
 
 const getRecommendation = async (req, res) => {
   try {
@@ -16,20 +18,21 @@ const getRecommendation = async (req, res) => {
       });
     }
 
-    // Return cached AI recommendation if available
     if (
       stay.aiRecommendation &&
-      stay.aiRecommendation.summary
+      stay.aiRecommendation.summary &&
+      stay.aiRecommendation.source === "area-ai"
     ) {
       return res.json(stay.aiRecommendation);
     }
 
-    // Generate new AI recommendation
-    const result = await generateStayRecommendation(stay);
+    const areaContext = await getAreaContext(stay.location);
+    const result = await generateStayRecommendation(stay, areaContext);
 
-    // Save to database
+    result.source = "area-ai";
     stay.aiRecommendation = result;
     await stay.save();
+    await consumeAiCredit(req.user.id);
 
     return res.json(result);
 

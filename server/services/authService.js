@@ -2,9 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/User");
 
-// ======================
-// Generate JWT
-// ======================
 const generateToken = (user) => {
   return jwt.sign(
     {
@@ -20,34 +17,12 @@ const generateToken = (user) => {
   );
 };
 
-// ======================
-// Find User by Email
-// ======================
 const getUserByEmail = async (email) => {
-  console.log("---------------------");
-  console.log("Checking email:", email);
-
-  const user = await UserModel.findOne({
+  return UserModel.findOne({
     email: email.toLowerCase(),
   });
-
-  console.log(
-    "Mongo user found:",
-    user
-      ? {
-          email: user.email,
-          isVerified: user.isVerified,
-          otp: user.otp,
-        }
-      : null
-  );
-
-  return user;
 };
 
-// ======================
-// Create User
-// ======================
 const createUser = async ({
   name,
   email,
@@ -59,7 +34,7 @@ const createUser = async ({
 }) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await UserModel.create({
+  return UserModel.create({
     name,
     email: email.toLowerCase(),
     password: hashedPassword,
@@ -68,10 +43,6 @@ const createUser = async ({
     otp,
     otpExpiry,
   });
-
-  console.log("Mongo user created:", user.email);
-
-  return user;
 };
 
 module.exports = {

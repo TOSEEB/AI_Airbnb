@@ -7,3 +7,7 @@ export const createReview = (reviewData) => {
 export const getReviews = (stayId) => {
   return api.get(`/reviews/${stayId}`);
 };
+
+export const getReviewEligibility = (stayId) => {
+  return api.get(`/reviews/eligibility/${stayId}`);
+};

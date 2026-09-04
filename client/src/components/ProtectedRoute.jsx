@@ -1,10 +1,24 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import Loader from "./Loader";
+import { locationToPath } from "../utils/authRedirect";
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
+  const { user, loading } = useAuth();
+  const location = useLocation();
 
-  if (!token) {
-    return <Navigate to="/login" replace />;
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!user) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: locationToPath(location) }}
+      />
+    );
   }
 
   return children;

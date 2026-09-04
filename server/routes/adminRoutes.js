@@ -3,10 +3,18 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/auth");
+const requireRole = require("../middleware/requireRole");
 
-const { adminSummary } = require("../controllers/adminController");
+const {
+  adminSummary,
+  changeUserRole,
+  takeDownStay,
+} = require("../controllers/adminController");
 
-router.get("/summary", auth, adminSummary);
+router.use(auth, requireRole("admin"));
+
+router.get("/summary", adminSummary);
+router.patch("/users/:id/role", changeUserRole);
+router.delete("/stays/:id", takeDownStay);
 
 module.exports = router;
-

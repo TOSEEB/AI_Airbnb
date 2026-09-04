@@ -10,6 +10,7 @@ import VerifyOTP from "./pages/verifyOTP";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
+import Stays from "./pages/Stays";
 import StayDetails from "./pages/StayDetails";
 import Dashboard from "./pages/Dashboard";
 import HostDashboard from "./pages/HostDashboard";
@@ -26,6 +27,7 @@ import NotFound from "./pages/NotFound";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import HostRoute from "./components/HostRoute";
+import AdminRoute from "./components/AdminRoute";
 import PublicRoute from "./components/PublicRoute";
 
 
@@ -39,7 +41,7 @@ function App() {
 
         {/* ========================= */}
         {/* Public Routes */}
-        {/* ========================= */}
+        {/* ======================== */}
 
         <Route 
           path="/" 
@@ -84,6 +86,11 @@ function App() {
           element={<ResetPassword />}
         />
 
+
+        <Route
+          path="/stays"
+          element={<Stays />}
+        />
 
         <Route
           path="/stay/:id"
@@ -198,9 +205,9 @@ function App() {
         <Route
           path="/admin"
           element={
-            <HostRoute>
+            <AdminRoute>
               <AdminDashboard />
-            </HostRoute>
+            </AdminRoute>
           }
         />
 

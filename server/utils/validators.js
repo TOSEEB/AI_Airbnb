@@ -1,4 +1,4 @@
-const validateSignupInput = ({ name, email, password }) => {
+const validateSignupInput = ({ name, email, password, role }) => {
   if (!name || typeof name !== 'string' || name.trim().length < 2) {
     return { isValid: false, message: 'Name must be at least 2 characters long.' };
   }
@@ -10,6 +10,10 @@ const validateSignupInput = ({ name, email, password }) => {
 
   if (!password || typeof password !== 'string' || password.length < 6) {
     return { isValid: false, message: 'Password must be at least 6 characters long.' };
+  }
+
+  if (role != null && role !== 'guest' && role !== 'host') {
+    return { isValid: false, message: 'Account type must be guest or host.' };
   }
 
   return { isValid: true, message: 'ok' };

@@ -17,3 +17,11 @@ export const createPaymentOrder = (data) => {
 export const verifyPayment = (data) => {
   return api.post("/payments/verify", data);
 };
+
+export const getHostBookings = () => {
+  return api.get("/bookings/host");
+};
+
+export const cancelBooking = (bookingId) => {
+  return api.post(`/bookings/${bookingId}/cancel`);
+};

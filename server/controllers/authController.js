@@ -27,9 +27,14 @@ const {
 
 const signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role: requestedRole } = req.body;
 
-    const validation = validateSignupInput({ name, email, password });
+    const validation = validateSignupInput({
+      name,
+      email,
+      password,
+      role: requestedRole,
+    });
     if (!validation.isValid) {
       return res.status(400).json({ message: validation.message });
     }
@@ -44,10 +49,7 @@ const signup = async (req, res) => {
 
 
     const normalizedEmail = email.trim().toLowerCase();
-    const role =
-      normalizedEmail.includes("host") || normalizedEmail.includes("admin")
-        ? "host"
-        : "guest";
+    const role = requestedRole === "host" ? "host" : "guest";
 
 
     // Generate OTP
@@ -154,11 +156,9 @@ const login = async (req, res) => {
 
 
     res.cookie("token", token, {
-
       httpOnly: true,
-
       sameSite: "lax",
-
+      path: "/",
     });
 
 
@@ -239,8 +239,15 @@ const getMe = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
+    const dbDown =
+      error.name === "MongoServerSelectionError" ||
+      error.name === "MongoNetworkError" ||
+      error.message?.includes("ENOTFOUND");
+
+    res.status(dbDown ? 503 : 500).json({
+      message: dbDown
+        ? "Database is unavailable. Check MongoDB Atlas DNS and Network Access."
+        : error.message,
     });
   }
 };
@@ -445,6 +452,46 @@ const resetPassword = async (req, res) => {
 
 
 
+const becomeHost = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (user.role !== "admin") {
+      user.role = "host";
+      await user.save();
+    }
+
+    const token = generateToken(user);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -454,4 +501,5 @@ module.exports = {
   verifyOTP,
   forgotPassword,
   resetPassword,
+  becomeHost,
 };

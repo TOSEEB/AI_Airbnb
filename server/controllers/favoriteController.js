@@ -8,6 +8,12 @@ const getMyFavorites = async (req, res) => {
     const data = await getFavorites(req.user.id);
     res.json(data);
   } catch (err) {
+    if (err.message === "User not found") {
+      return res.status(404).json({
+        message: err.message,
+      });
+    }
+
     res.status(500).json({
       message: err.message,
     });
@@ -23,6 +29,12 @@ const toggleMyFavorite = async (req, res) => {
 
     res.json(data);
   } catch (err) {
+    if (err.message === "Stay not found" || err.message === "User not found") {
+      return res.status(404).json({
+        message: err.message,
+      });
+    }
+
     res.status(500).json({
       message: err.message,
     });

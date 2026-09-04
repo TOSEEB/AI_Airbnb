@@ -7,76 +7,75 @@ const client = process.env.AI_API_KEY
     })
   : null;
 
+const toStayPayload = (stay) => ({
+  stayId: String(stay._id),
+  title: stay.title,
+  location: stay.location,
+  price: stay.price,
+  rating: stay.rating,
+  guests: stay.guests,
+  category: stay.category,
+  description: (stay.description || "").slice(0, 280),
+});
+
 const generatePlannerRecommendation = async (prompt, stays) => {
-  try {
+  if (!stays.length) {
+    throw new Error("No matching stays found");
+  }
 
-    const stayList = stays.map((stay) => ({
-      title: stay.title,
-      location: stay.location,
-      price: stay.price,
-      rating: stay.rating,
-      guests: stay.maxGuests,
-      type: stay.type,
-      description: stay.description,
-    }));
+  const stayList = stays.map(toStayPayload);
 
-
-    const aiPrompt = `
-You are an AI travel planner for an Airbnb application.
+  const aiPrompt = `
+You are an AI travel planner for a vacation rental app.
 
 A user says:
-
 "${prompt}"
 
-Below is a list of available Airbnb stays:
+Choose exactly ONE stay from this inventory. Use the stayId values as-is.
+Do not invent properties that are not in the list.
 
+Inventory:
 ${JSON.stringify(stayList, null, 2)}
 
-Choose ONLY ONE stay that best matches the user's request.
-
-Return ONLY valid JSON in this format:
-
+Return ONLY valid JSON:
 {
-  "title": "Property Name",
-  "location": "Location",
-  "price": 6500,
-  "rating": 4.8,
-  "reason": "Explain why this stay is the best choice in 3-4 sentences."
+  "stayId": "the _id of the chosen stay",
+  "reason": "3-4 sentences explaining why this inventory stay fits the request"
 }
 `;
 
-    if (!client) {
-      throw new Error("AI service is not configured. Please set AI_API_KEY.");
-    }
-
-    const response = await client.chat.completions.create({
-      model: "openai/gpt-4o-mini",
-
-      response_format: {
-        type: "json_object",
-      },
-
-      max_tokens: 250,
-
-      messages: [
-        {
-          role: "user",
-          content: aiPrompt,
-        },
-      ],
-    });
-
-    return JSON.parse(
-      response.choices[0].message.content
-    );
-
-  } catch (error) {
-
-    console.log("PLANNER AI ERROR:", error);
-
-    throw error;
-
+  if (!client) {
+    throw new Error("AI service is not configured. Please set AI_API_KEY.");
   }
+
+  const response = await client.chat.completions.create({
+    model: "openai/gpt-4o-mini",
+    response_format: {
+      type: "json_object",
+    },
+    max_tokens: 280,
+    messages: [
+      {
+        role: "user",
+        content: aiPrompt,
+      },
+    ],
+  });
+
+  const parsed = JSON.parse(response.choices[0].message.content);
+  const chosen =
+    stays.find((stay) => String(stay._id) === String(parsed.stayId)) ||
+    stays[0];
+
+  return {
+    stayId: String(chosen._id),
+    title: chosen.title,
+    location: chosen.location,
+    price: chosen.price,
+    rating: chosen.rating,
+    images: chosen.images || [],
+    reason: parsed.reason || "This stay is the closest match in our listings.",
+  };
 };
 
 module.exports = {

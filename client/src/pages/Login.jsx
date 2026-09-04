@@ -1,29 +1,27 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { useAuth } from "../context/AuthContext";
+import { getReturnPath } from "../utils/authRedirect";
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const returnTo = getReturnPath(location.state?.from);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       await login(email, password);
-
       toast.success("Login successful!");
-
-      setTimeout(() => {
-        navigate("/");
-      }, 1200);
-
+      navigate(returnTo, { replace: true });
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Login failed"
@@ -82,6 +80,7 @@ const Login = () => {
         <Link
           className="text-blue-600 ml-2 hover:underline"
           to="/register"
+          state={{ from: returnTo }}
         >
           Register
         </Link>

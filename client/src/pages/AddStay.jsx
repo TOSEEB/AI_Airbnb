@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createStay } from "../api/stayApi";
 import { uploadImage } from "../api/uploadApi";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 const AddStay = () => {
   const navigate = useNavigate();

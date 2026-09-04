@@ -1,25 +1,47 @@
-const favorites = [];
+const User = require("../models/User");
+const Stay = require("../models/Stay");
 
 const getFavorites = async (userId) => {
-  return favorites.filter(f => f.userId === userId);
+  const user = await User.findById(userId).populate("favourites");
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user.favourites || [];
 };
 
 const toggleFavorite = async (userId, stayId) => {
-  const existing = favorites.find(
-    f => f.userId === userId && f.stayId === stayId
-  );
+  const stay = await Stay.findById(stayId).select("_id");
 
-  if (existing) {
-    const index = favorites.indexOf(existing);
-    favorites.splice(index, 1);
-  } else {
-    favorites.push({
-      userId,
-      stayId,
-    });
+  if (!stay) {
+    throw new Error("Stay not found");
   }
 
-  return favorites.filter(f => f.userId === userId);
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const alreadySaved = user.favourites.some(
+    (id) => String(id) === String(stayId)
+  );
+
+  if (alreadySaved) {
+    user.favourites.pull(stayId);
+  } else {
+    user.favourites.addToSet(stayId);
+  }
+
+  await user.save();
+
+  const favorites = await getFavorites(userId);
+
+  return {
+    favorites,
+    isFavorite: !alreadySaved,
+  };
 };
 
 module.exports = {
