@@ -42,12 +42,10 @@ const bookingSchema = new mongoose.Schema(
 
     razorpayOrderId: {
       type: String,
-      default: null,
     },
 
     razorpayPaymentId: {
       type: String,
-      default: null,
     },
 
     holdExpiresAt: {
@@ -64,10 +62,35 @@ bookingSchema.index(
   { razorpayPaymentId: 1 },
   {
     unique: true,
-    sparse: true,
+    partialFilterExpression: {
+      razorpayPaymentId: { $type: "string" },
+    },
   }
 );
 
 bookingSchema.index({ stay: 1, status: 1, checkIn: 1, checkOut: 1 });
 
-module.exports = mongoose.model("Booking", bookingSchema); 
+const Booking = mongoose.model("Booking", bookingSchema);
+
+const ensureBookingPaymentIndex = async () => {
+  try {
+    await Booking.collection.dropIndex("razorpayPaymentId_1");
+  } catch (err) {
+    if (err.code !== 27 && err.codeName !== "IndexNotFound") {
+      console.warn("Could not drop razorpayPaymentId_1:", err.message);
+    }
+  }
+
+  await Booking.updateMany(
+    {
+      $or: [{ razorpayPaymentId: null }, { razorpayPaymentId: "" }],
+    },
+    { $unset: { razorpayPaymentId: 1 } }
+  );
+
+  await Booking.syncIndexes();
+};
+
+module.exports = Booking;
+module.exports.ensureBookingPaymentIndex = ensureBookingPaymentIndex;
+ 

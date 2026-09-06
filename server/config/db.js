@@ -44,6 +44,9 @@ const connectDatabase = async () => {
 
     cachedConnection = connection;
 
+    const { ensureBookingPaymentIndex } = require("../models/Booking");
+    await ensureBookingPaymentIndex();
+
 
     console.log(
       "MongoDB connected successfully"

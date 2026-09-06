@@ -33,6 +33,9 @@ const connectDB = async () => {
     hasConnected = true;
     console.log("✅ MongoDB Connected Successfully");
 
+    const { ensureBookingPaymentIndex } = require("./models/Booking");
+    await ensureBookingPaymentIndex();
+
     await seedAdmin();
     await seedStays();
     return true;
