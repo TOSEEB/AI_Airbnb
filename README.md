@@ -12,31 +12,15 @@ AI Airbnb is a production-style vacation rental application built with **React, 
 
 ## 📸 Screenshots
 
-> Add your application screenshots to the `screenshots/` folder and update the paths below.
-
-### 🏠 Home & Property Search
-
-![Home and Property Search](./screenshots/home.png)
-
-### 🏡 Property Details
-
-![Property Details](./screenshots/property-details.png)
+### 🏠 Property Search
+![Property Search](./screenshot/Home.png)
 
 ### 🤖 AI Travel Recommendations
+![AI Travel Recommendations](./screenshot/AI_power_assistant.png)
 
-![AI Travel Recommendations](./screenshots/ai-recommendations.png)
-
-### 📅 Booking & Payments
-
-![Booking and Payments](./screenshots/booking.png)
-
-### 👨‍💼 Host Dashboard
-
-![Host Dashboard](./screenshots/host-dashboard.png)
-
-### 🛠️ Admin Dashboard
-
-![Admin Dashboard](./screenshots/admin-dashboard.png)
+### 🏡 Property Details
+![Property Details](./screenshot/Property_detail_1.png)
+![Property Details](./screenshot/Property_detail_2.png)
 
 ---
 
